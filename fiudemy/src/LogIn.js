@@ -18,8 +18,8 @@ function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
+      <Link color="inherit" href="">
+        Fiudemy
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -69,7 +69,7 @@ export default function SignInSide() {
               alignItems: 'center',
             }}
           >
-            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+            <Avatar sx={{ m: 1, bgcolor: 'black' }}>
               <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
@@ -85,6 +85,16 @@ export default function SignInSide() {
                 name="email"
                 autoComplete="email"
                 autoFocus
+                sx={
+                    {
+                    '& label.Mui-focused': {
+                        color: 'black', 
+                    },                    
+                    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: 'black', 
+                    },
+                    }
+                }
               />
               <TextField
                 margin="normal"
@@ -95,28 +105,38 @@ export default function SignInSide() {
                 type="password"
                 id="password"
                 autoComplete="current-password"
+                sx={
+                    {
+                    '& label.Mui-focused': {
+                        color: 'black', 
+                    },                    
+                    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: 'black', 
+                    },
+                    }
+                }
               />
               <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
+                control={<Checkbox value="remember" color="primary" style={{ color: 'black' }}/>}
                 label="Remember me"
               />
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
-                sx={{ mt: 3, mb: 2 }}
+                sx={{ mt: 3, mb: 2, background: "black" }}
               >
                 Sign In
               </Button>
               <Grid container>
                 <Grid item xs>
-                  <Link href="#" variant="body2">
+                  <Link href="#" variant="body2" sx={{color: "black"}}>
                     Forgot password?
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link href="#" variant="body2">
-                    {"Don't have an account? Sign Up"}
+                  <Link href="#" variant="body2" sx={{color: "black"}}>
+                    Don't have an account? Sign Up
                   </Link>
                 </Grid>
               </Grid>
