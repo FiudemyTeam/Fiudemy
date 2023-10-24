@@ -1,7 +1,7 @@
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Button from '@mui/material/Button';
-import CameraIcon from '@mui/icons-material/PhotoCamera';
+import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -40,7 +40,7 @@ export default function Landpage() {
       <CssBaseline />
       <AppBar position="relative">
         <Toolbar>
-          <CameraIcon sx={{ mr: 2 }} />
+          <AutoStoriesIcon sx={{ mr: 2 }} />
           <Typography variant="h6" color="inherit" noWrap>
             Fiudemy
           </Typography>
@@ -63,12 +63,11 @@ export default function Landpage() {
               color="text.primary"
               gutterBottom
             >
+              <AutoStoriesIcon fontSize={'inherit'} vertical-align={'middle'} sx={{ mr: 2 }} />
               Fiudemy
             </Typography>
             <Typography variant="h5" align="center" color="text.secondary" paragraph>
-              Something short and leading about the collection below—its contents,
-              the creator, etc. Make it short and sweet, but not too short so folks
-              don&apos;t simply skip over it entirely.
+              Elige entre más de 210.000 cursos de vídeo en línea con nuevo contenido cada mes
             </Typography>
             <Stack
               sx={{ pt: 4 }}
