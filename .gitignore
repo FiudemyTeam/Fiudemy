@@ -25,3 +25,5 @@ yarn-error.log*
 venv/
 __pycache__/
 *.db
+
+node_modules/
