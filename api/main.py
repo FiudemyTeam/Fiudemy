@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
-from routers import courses
+from routers import courses, users
 from db import create_db_and_tables, drop_db_and_tables, seed_db
 
 
@@ -23,6 +23,8 @@ app = FastAPI(
 )
 
 app.include_router(courses.router)
+app.include_router(users.user_router)
+
 
 
 @app.get("/")
