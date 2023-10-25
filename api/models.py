@@ -7,7 +7,7 @@ from pydantic import validator, EmailStr
 class CourseBase(SQLModel):
     name: str = Field(index=True)
     description: Optional[str] = None
-
+    image: Optional[str] = None
 
 class Course(CourseBase, table=True):
     # Id is Optional because it is auto generated
