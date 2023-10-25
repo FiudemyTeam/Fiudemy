@@ -39,6 +39,7 @@ export default function SignUp() {
   
       // Aquí puedes manejar la respuesta, por ejemplo, mostrar un mensaje de éxito o redirigir al usuario.
       console.log('Registro exitoso:', response.data);
+      window.location.href = '/login';
     } catch (error) {
       // Maneja los errores, por ejemplo, muestra un mensaje de error al usuario.
       console.error('Error al registrar:', error);
