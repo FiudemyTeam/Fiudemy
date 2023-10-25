@@ -1,5 +1,6 @@
+from datetime import datetime
 from sqlmodel import SQLModel, create_engine, Session
-from models import Course
+from models import Course, User
 
 sqlite_file_name = "database.db"
 sqlite_url = f"sqlite:///{sqlite_file_name}"
@@ -25,4 +26,12 @@ def seed_db():
     with Session(engine) as session:
         for course in courses:
             session.add(course)
-        session.commit()
+        default_user = User(
+            username="default_username",
+            password="default_password",
+            email="default@example.com",
+            created_at=datetime.now(),
+            is_student=True
+        )
+        session.add(default_user)         
+        session.commit()            
