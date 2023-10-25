@@ -15,6 +15,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import MiImagen from '../src/img/fiudemy.png';
 import Copyright from './general/Copyright';
 
+
 // TODO remove, this demo shouldn't need to reset the theme.
 
 const defaultTheme = createTheme();
@@ -123,7 +124,7 @@ export default function SignInSide() {
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link href="#" variant="body2" sx={{color: "black"}}>
+                  <Link href="/register" variant="body2" sx={{color: "black"}}>
                     Don't have an account? Sign Up
                   </Link>
                 </Grid>
