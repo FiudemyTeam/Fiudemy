@@ -5,6 +5,7 @@ import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
+import { Link } from 'react-router-dom';
 import CardMedia from '@mui/material/CardMedia';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
@@ -16,6 +17,7 @@ import Container from '@mui/material/Container';
 import Copyright from './general/Copyright';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios'
+import ExitToAppIcon from '@mui/icons-material/ExitToApp'; // Icono para "Logout"
 
 const base_url = 'http://localhost:8000'
 
@@ -53,6 +55,10 @@ export default function Landpage() {
           <Typography variant="h6" color="inherit" noWrap>
             Fiudemy
           </Typography>
+          <Box sx={{ flexGrow: 1 }} /> { /* Este elemento empujará el botón "Logout" hacia la derecha */ }
+          <Link to="/login" style={{ textDecoration: 'none', color: 'white' }}>
+            <ExitToAppIcon /> { /* Icono de "Logout" */ }
+          </Link>
         </Toolbar>
       </AppBar>
       <main>
