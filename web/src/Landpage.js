@@ -120,7 +120,7 @@ export default function Landpage() {
                     </Typography>
                   </CardContent>
                   <CardActions>
-                    <Button size="small">View</Button>
+                    <Button size="small">Ver</Button>
                   </CardActions>
                 </Card>
               </Grid>
