@@ -14,20 +14,35 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import MiImagen from '../src/img/fiudemy.png';
 import Copyright from './general/Copyright';
+import axios from 'axios'
 
 
 // TODO remove, this demo shouldn't need to reset the theme.
 
+const base_url = 'http://localhost:8000'
 const defaultTheme = createTheme();
 
 export default function SignInSide() {
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
+    const userData = {
+      username: data.get('username'),
       password: data.get('password'),
-    });
+    };
+
+    try {
+      // Realiza una solicitud POST al endpoint de registro en tu API
+      console.log(userData)
+      const response = await axios.post(`${base_url}/login`, userData);
+  
+      // Aquí puedes manejar la respuesta, por ejemplo, mostrar un mensaje de éxito o redirigir al usuario.
+      console.log('Login exitoso:', response.data);
+      window.location.href = '/home';
+    } catch (error) {
+      // Maneja los errores, por ejemplo, muestra un mensaje de error al usuario.
+      console.error('Error al loggearse:', error);
+    }
   };
 
   return (
@@ -64,15 +79,15 @@ export default function SignInSide() {
             <Typography component="h1" variant="h5">
               Sign in
             </Typography>
-            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+            <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
               <TextField
                 margin="normal"
                 required
                 fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
+                id="username"
+                label="Username"
+                name="username"
+                autoComplete="username"
                 autoFocus
                 sx={
                     {
