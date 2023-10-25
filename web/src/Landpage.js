@@ -67,7 +67,7 @@ const cards = [
     description: 'Aprende a invertir en el mercado de valores y hacer crecer tu patrimonio.',
   },
   {
-    index: 10,
+    index: 9,
     image: 'https://www.escueladeyoga.com/wp-content/uploads/2021/07/EIY-coemmn-004.jpg',
     name: 'Curso de Yoga y Meditación',
     description: 'Encuentra la paz interior y mejora tu salud a través del yoga y la meditación.',
