@@ -15,6 +15,8 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import AutoStoriesIcon from '@mui/icons-material/AutoStories';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';                                                                                                                                                                                  
 
 function Copyright() {
   return (
@@ -79,10 +81,14 @@ export default function Album() {
       <CssBaseline />
       <AppBar position="relative">
         <Toolbar>
-          <CameraIcon sx={{ mr: 2 }} />
+          <AutoStoriesIcon sx={{ mr: 2 }} />
           <Typography variant="h6" color="inherit" noWrap>
             Fiudemy
           </Typography>
+          <Box sx={{ flexGrow: 1 }} /> { /* Este elemento empujará el botón "Logout" hacia la derecha */ }
+          <Link to="/login" style={{ textDecoration: 'none', color: 'white' }}>
+            <ExitToAppIcon /> { /* Icono de "Logout" */ }
+          </Link>
         </Toolbar>
       </AppBar>
       <main>
@@ -102,7 +108,7 @@ export default function Album() {
       color="text.primary"
       gutterBottom
     >
-      Iniciacion a la programacion en Python
+      iniciación a la programacion en Python
     </Typography>
     <Typography variant="h5" align="center" color="text.secondary" paragraph>
         Curso básico de programación en Python para principiantes, abordando conceptos esenciales y la sintaxis de Python.
@@ -154,7 +160,7 @@ export default function Album() {
       {/* Footer */}
       <Box sx={{ bgcolor: 'background.paper', p: 6 }} component="footer">
         <Typography variant="h6" align="center" gutterBottom>
-          Footer
+          Fiudemy
         </Typography>
         <Typography
           variant="subtitle1"
@@ -162,7 +168,7 @@ export default function Album() {
           color="text.secondary"
           component="p"
         >
-          Something here to give the footer a purpose!
+          Continua aprendiendo con nosotros!
         </Typography>
         <Copyright />
       </Box>
