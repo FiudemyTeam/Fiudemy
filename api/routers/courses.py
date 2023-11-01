@@ -1,8 +1,9 @@
 from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
 from sqlmodel import Session, select
 from typing import List
 
-from models import Course, CourseCreate, CourseRead
+from models import Course, CourseCreate, CourseRead, CourseUserRate
 
 from db import engine
 
@@ -11,6 +12,12 @@ router = APIRouter(
     tags=["courses"],
     responses={404: {"description": "Not found"}},
 )
+
+
+class CourseRateRequest(BaseModel):
+    user_id: int
+    course_id: int
+    rate: int
 
 
 @router.get("/", response_model=List[CourseRead])
@@ -36,3 +43,34 @@ def post_course(course: CourseCreate):
         session.commit()
         session.refresh(new_course)
         return new_course
+
+
+@router.post("/{id}/rate", response_model=CourseUserRate)
+def rate_course(course_rate_request: CourseRateRequest):
+    # TODO: the user_id should be retrieved from the token instead of the request body
+    course_user_rate = CourseUserRate(user_id=course_rate_request.user_id, course_id=course_rate_request.course_id,
+                                      rate=course_rate_request.rate)
+    with Session(engine) as session:
+        session.add(course_user_rate)
+        session.commit()
+        session.refresh(course_user_rate)
+        print("Created CourseUserRate: ", course_user_rate)
+        return course_user_rate
+
+
+@router.put("/{id}/rate", response_model=CourseUserRate)
+def update_course_rate(course_rate_request: CourseRateRequest):
+    # TODO: the user_id should be retrieved from the token instead of the request body
+    with Session(engine) as session:
+        course_user_rate_statement = select(CourseUserRate).where(
+            CourseUserRate.user_id == course_rate_request.user_id and CourseUserRate.course_id == course_rate_request.course_id)
+        results = session.exec(course_user_rate_statement)
+        found_course_user_rate = results.one()
+        print("Found CourseUserRate to update:", found_course_user_rate)
+
+        found_course_user_rate.rate = course_rate_request.rate
+        session.add(found_course_user_rate)
+        session.commit()
+        session.refresh(found_course_user_rate)
+        print("Updated CourseUserRate:", found_course_user_rate)
+        return found_course_user_rate
