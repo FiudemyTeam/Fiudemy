@@ -109,7 +109,9 @@ const UserProfile = () => {
                       </Typography>
                     </CardContent>
                     <CardActions>
-                      <Button size="small">Ver</Button>
+                      <Link to={`/course/${course.id}`} style={{ textDecoration: 'none' }}>
+                        <Button size="small">Ver</Button>
+                      </Link>
                     </CardActions>
                     <div style={{ padding: '16px' }}>
                       <LinearProgress

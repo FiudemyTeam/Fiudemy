@@ -50,7 +50,7 @@ const CourseDetail = () => {
           </Link>
         </Toolbar>
       </AppBar>
-      <Container>
+      <Container sx={{ marginTop: '20px' }}>
         {course ? (
           <Paper elevation={3} style={{ padding: '20px' }}>
             <Typography variant="h4" style={{ marginBottom: '10px' }}>
