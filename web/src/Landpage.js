@@ -63,7 +63,7 @@ export default function Landpage() {
           <Link to="/profile" style={{ textDecoration: 'none', color: 'white', marginRight: 20 }}>
             <PersonIcon />
           </Link>
-          <Link to="/logout" style={{ textDecoration: 'none', color: 'white' }}>
+          <Link to="/login" style={{ textDecoration: 'none', color: 'white' }}>
             <ExitToAppIcon />
           </Link>
         </Toolbar>
@@ -127,7 +127,9 @@ export default function Landpage() {
                     </Typography>
                   </CardContent>
                   <CardActions>
-                    <Button size="small">Ver</Button>
+                    <Link to={`/course/${course.id}`} style={{ textDecoration: 'none' }}>
+                      <Button size="small">Ver</Button>
+                    </Link>
                   </CardActions>
                 </Card>
               </Grid>
