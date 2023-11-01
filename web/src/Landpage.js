@@ -17,7 +17,9 @@ import Container from '@mui/material/Container';
 import Copyright from './general/Copyright';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios'
-import ExitToAppIcon from '@mui/icons-material/ExitToApp'; // Icono para "Logout"
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import PersonIcon from '@mui/icons-material/Person';
+
 
 const base_url = 'http://localhost:8000'
 
@@ -51,13 +53,18 @@ export default function Landpage() {
       <CssBaseline />
       <AppBar position="relative">
         <Toolbar>
-          <AutoStoriesIcon sx={{ mr: 2 }} />
-          <Typography variant="h6" color="inherit" noWrap>
-            Fiudemy
-          </Typography>
-          <Box sx={{ flexGrow: 1 }} /> { /* Este elemento empujará el botón "Logout" hacia la derecha */ }
+          <Link to="/home" style={{ textDecoration: 'none', color: 'white', display: 'flex', alignItems: 'center' }}>
+            <AutoStoriesIcon />
+            <Typography variant="h6" color="inherit" noWrap style={{ marginLeft: '10px' }}>
+              Fiudemy
+            </Typography>
+          </Link>
+          <div style={{ flexGrow: 1 }} />
+          <Link to="/profile" style={{ textDecoration: 'none', color: 'white', marginRight: 20 }}>
+            <PersonIcon />
+          </Link>
           <Link to="/login" style={{ textDecoration: 'none', color: 'white' }}>
-            <ExitToAppIcon /> { /* Icono de "Logout" */ }
+            <ExitToAppIcon />
           </Link>
         </Toolbar>
       </AppBar>
@@ -90,12 +97,10 @@ export default function Landpage() {
               spacing={2}
               justifyContent="center"
             >
-              <Button variant="contained">Main call to action</Button>
-              <Button variant="outlined">Secondary action</Button>
             </Stack>
           </Container>
         </Box>
-        <Container sx={{ py: 8 }} maxWidth="md">
+        <Container sx={{ py: 2 }} maxWidth="md">
           {/* End hero unit */}
           <Grid container spacing={4}>
             {courses.map((course) => (
@@ -120,7 +125,9 @@ export default function Landpage() {
                     </Typography>
                   </CardContent>
                   <CardActions>
-                    <Button size="small">Ver</Button>
+                    <Link to={`/course/${course.id}`} style={{ textDecoration: 'none' }}>
+                      <Button size="small">Ver</Button>
+                    </Link>
                   </CardActions>
                 </Card>
               </Grid>
@@ -130,17 +137,6 @@ export default function Landpage() {
       </main>
       {/* Footer */}
       <Box sx={{ bgcolor: 'background.paper', p: 6 }} component="footer">
-        <Typography variant="h6" align="center" gutterBottom>
-          Footer
-        </Typography>
-        <Typography
-          variant="subtitle1"
-          align="center"
-          color="text.secondary"
-          component="p"
-        >
-          Something here to give the footer a purpose!
-        </Typography>
         <Copyright />
       </Box>
       {/* End footer */}
