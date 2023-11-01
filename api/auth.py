@@ -4,8 +4,6 @@ from fastapi import Security, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from passlib.context import CryptContext
 import jwt
-from starlette import status
-from repositories.user_repository import find_user
 
 
 class AuthHandler:
@@ -36,18 +34,9 @@ class AuthHandler:
         except jwt.InvalidTokenError:
             raise HTTPException(status_code=401, detail='Invalid token')
 
-    def auth_wrapper(self, auth: HTTPAuthorizationCredentials = Security(security)):
+    def auth_wrapper(self,
+                     auth: HTTPAuthorizationCredentials = Security(security)):
         return self.decode_token(auth.credentials)
 
-    def get_current_user(self, auth: HTTPAuthorizationCredentials = Security(security)):
-        credentials_exception = HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='Could not validate credentials'
-        )
-        username = self.decode_token(auth.credentials)
-        if username is None:
-            raise credentials_exception
-        user = find_user(username)
-        if user is None:
-            raise credentials_exception
-        return user
+
+auth_handler = AuthHandler()

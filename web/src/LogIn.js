@@ -38,6 +38,7 @@ export default function SignInSide() {
   
       // Aquí puedes manejar la respuesta, por ejemplo, mostrar un mensaje de éxito o redirigir al usuario.
       console.log('Login exitoso:', response.data);
+      localStorage.setItem('token', response.data.token);
       window.location.href = '/home';
     } catch (error) {
       // Maneja los errores, por ejemplo, muestra un mensaje de error al usuario.

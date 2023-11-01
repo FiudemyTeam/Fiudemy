@@ -25,7 +25,11 @@ const base_url = 'http://localhost:8000'
 
 async function fetchCoursesFromBackend() {
   try {
-    const response = await axios.get(`${base_url}/courses/`);
+    const response = await axios.get(`${base_url}/courses/`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
     return response.data;
   } catch (error) {
     console.error('Error al obtener los datos de los cursos!', error);
