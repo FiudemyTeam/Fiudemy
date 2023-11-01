@@ -35,7 +35,7 @@ class User(SQLModel, table=True):
     email: EmailStr
     created_at: datetime.datetime = datetime.datetime.now()
     course_rates: List["Course"] = Relationship(back_populates="user_rates", link_model=CourseUserRate)
-
+    about_me: Optional[str] = Field(max_length=300,default="")
 
 class Course(CourseBase, table=True):
     # Id is Optional because it is auto generated
