@@ -4,7 +4,7 @@ from sqlmodel import Session, select
 from typing import List
 
 from models import Course, CourseCreate, CourseRead, CourseUserRate
-
+from dependencies import UserDependency
 from db import engine
 
 router = APIRouter(
@@ -15,7 +15,6 @@ router = APIRouter(
 
 
 class CourseRateRequest(BaseModel):
-    user_id: int
     course_id: int
     rate: int
 
@@ -46,9 +45,10 @@ def post_course(course: CourseCreate):
 
 
 @router.post("/{id}/rate", response_model=CourseUserRate)
-def rate_course(course_rate_request: CourseRateRequest):
-    # TODO: the user_id should be retrieved from the token instead of the request body
-    course_user_rate = CourseUserRate(user_id=course_rate_request.user_id, course_id=course_rate_request.course_id,
+def rate_course(course_rate_request: CourseRateRequest,
+                user: UserDependency):
+    course_user_rate = CourseUserRate(user_id=user.id,
+                                      course_id=course_rate_request.course_id,
                                       rate=course_rate_request.rate)
     with Session(engine) as session:
         session.add(course_user_rate)
@@ -59,11 +59,12 @@ def rate_course(course_rate_request: CourseRateRequest):
 
 
 @router.put("/{id}/rate", response_model=CourseUserRate)
-def update_course_rate(course_rate_request: CourseRateRequest):
-    # TODO: the user_id should be retrieved from the token instead of the request body
+def update_course_rate(course_rate_request: CourseRateRequest,
+                       user: UserDependency):
     with Session(engine) as session:
         course_user_rate_statement = select(CourseUserRate).where(
-            CourseUserRate.user_id == course_rate_request.user_id and CourseUserRate.course_id == course_rate_request.course_id)
+            CourseUserRate.user_id == user.id and
+            CourseUserRate.course_id == course_rate_request.course_id)
         results = session.exec(course_user_rate_statement)
         found_course_user_rate = results.one()
         print("Found CourseUserRate to update:", found_course_user_rate)
