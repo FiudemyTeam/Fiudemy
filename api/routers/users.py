@@ -1,7 +1,4 @@
 from fastapi import APIRouter, HTTPException
-from fastapi.security import HTTPAuthorizationCredentials
-from starlette.responses import JSONResponse
-from starlette.status import HTTP_201_CREATED,HTTP_404_NOT_FOUND
 
 from auth import AuthHandler
 from db import engine
@@ -32,13 +29,11 @@ def register(user: UserInput):
 def login(user: UserLogin):
     user_found = find_user(user.username)
     if not user_found:
-        raise HTTPException(status_code=401, detail='Invalid username and/or password')
-    if user_found.username == "default_username":
-        return user_found.password
+        raise HTTPException(status_code=401,
+                            detail='Invalid username and/or password')
     verified = auth_handler.verify_password(user.password, user_found.password)
     if not verified:
-        raise HTTPException(status_code=401, detail='Invalid username and/or password')
+        raise HTTPException(status_code=401,
+                            detail='Invalid username and/or password')
     token = auth_handler.encode_token(user_found.username)
     return {'token': token}
-
-
