@@ -97,12 +97,10 @@ export default function Landpage() {
               spacing={2}
               justifyContent="center"
             >
-              <Button variant="contained">Main call to action</Button>
-              <Button variant="outlined">Secondary action</Button>
             </Stack>
           </Container>
         </Box>
-        <Container sx={{ py: 8 }} maxWidth="md">
+        <Container sx={{ py: 2 }} maxWidth="md">
           {/* End hero unit */}
           <Grid container spacing={4}>
             {courses.map((course) => (
