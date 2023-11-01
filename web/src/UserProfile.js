@@ -75,7 +75,7 @@ const UserProfile = () => {
       <Container sx={{ marginTop: '20px' }}>
         <Card>
           <CardContent>
-            <Typography variant="h5">User Profile</Typography>
+            <Typography variant="h5">Perfil</Typography>
             <Typography>
               Username: {userData.username}
             </Typography>
