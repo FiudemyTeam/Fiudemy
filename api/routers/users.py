@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Security
 from fastapi.security import HTTPAuthorizationCredentials
 from starlette.responses import JSONResponse
 from starlette.status import HTTP_201_CREATED,HTTP_404_NOT_FOUND
@@ -7,7 +7,7 @@ from auth import AuthHandler
 from db import engine
 from sqlmodel import Session
 from models import UserInput, User, UserLogin
-from repositories.user_repository import select_all_users, find_user
+from repositories.user_repository import select_all_users, find_user, update_user
 
 user_router = APIRouter()
 auth_handler = AuthHandler()
@@ -21,7 +21,7 @@ def register(user: UserInput):
         raise HTTPException(status_code=400, detail='Username is taken')
     hashed_pwd = auth_handler.get_password_hash(user.password)
     with Session(engine) as session:
-        u = User(username=user.username, password=hashed_pwd, email=user.email)
+        u = User(username=user.username, password=hashed_pwd, email=user.email, )
         session.add(u)
         session.commit()
         session.refresh(u)
@@ -41,4 +41,17 @@ def login(user: UserLogin):
     token = auth_handler.encode_token(user_found.username)
     return {'token': token}
 
+@user_router.get('/users/me', tags=['users'])
+def get_current_user(user: User = Depends(auth_handler.get_current_user)):
+    return user
 
+@user_router.get('/users/about_me', tags=['users'])
+def get_current_user(user: User = Depends(auth_handler.get_current_user)):
+    return user.about_me
+
+@user_router.put('/update-about-me',tags=['users'])
+def update_about_me(about_me: str, user = Depends(auth_handler.get_current_user)):
+    user_found = find_user(user.username)
+    user_found.about_me = about_me
+    update_user(user_found)
+    return {'message': 'About me updated successfully'}
