@@ -42,7 +42,6 @@ def seed_db():
             password="default_password",
             email="default@example.com",
             created_at=datetime.now(),
-            is_student=True,
             course_rates=[]
         )
         session.add(default_user)

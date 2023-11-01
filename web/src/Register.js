@@ -6,8 +6,6 @@ import TextField from '@mui/material/TextField';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
@@ -97,14 +95,6 @@ export default function SignUp() {
                   id="password"
                   inputProps={{ minLength: 6 }}
                   autoComplete="new-password"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <FormControlLabel
-                  name="is_student"
-                  id="is_student"
-                  control={<Checkbox value="on" color="primary"/>}
-                  label="Are you a student?"
                 />
               </Grid>
             </Grid>

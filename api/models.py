@@ -34,7 +34,6 @@ class User(SQLModel, table=True):
     password: str = Field(max_length=256, min_length=6)
     email: EmailStr
     created_at: datetime.datetime = datetime.datetime.now()
-    is_student: bool = True
     course_rates: List["Course"] = Relationship(back_populates="user_rates", link_model=CourseUserRate)
 
 
@@ -49,7 +48,6 @@ class UserInput(SQLModel):
     password: str = Field(max_length=256, min_length=6)
     password2: str
     email: EmailStr
-    is_student: bool = True
 
     @validator('password2')
     def password_match(cls, v, values, **kwargs):
