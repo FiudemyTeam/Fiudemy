@@ -41,12 +41,12 @@ def login(user: UserLogin):
 
 
 @user_router.get('/users/me', tags=['users'])
-def get_current_user(user: UserDependency )):
+def get_current_user(user: UserDependency):
     return user
 
 
 @user_router.get('/users/about_me', tags=['users'])
-def get_current_user_about_me(user: UserDependency ):
+def get_current_user_about_me(user: UserDependency):
     return user.about_me
 
 
