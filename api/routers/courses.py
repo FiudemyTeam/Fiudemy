@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from sqlmodel import Session, select
 from typing import List
 
-from models import Course, CourseCreate, CourseRead, CourseUserRate
+from models.courses import Course, CourseCreate, CourseRead, CourseUserRate
 from dependencies import UserDependency
 from db import engine
 
@@ -27,7 +27,7 @@ async def get_courses():
 
 
 @router.get("/{id}", response_model=CourseRead)
-async def get_course(id: str):
+async def get_course(id: int):
     with Session(engine) as session:
         course = session.get(Course, id)
         if not course:

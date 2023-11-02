@@ -2,7 +2,7 @@ from fastapi import Depends, HTTPException, status
 from typing import Annotated
 from auth import auth_handler
 from repositories.user_repository import find_user
-from models import User
+from models.users import User
 
 
 def get_current_user(decoded_token: str = Depends(auth_handler.auth_wrapper)):

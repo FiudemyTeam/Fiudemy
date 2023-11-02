@@ -1,31 +1,12 @@
-from typing import Optional, List
+from typing import Optional, List, TYPE_CHECKING
 from sqlmodel import Field, SQLModel, Relationship
 import datetime
 from pydantic import validator, EmailStr
 
+from .course_rates import CourseUserRate
 
-class CourseBase(SQLModel):
-    name: str = Field(index=True)
-    description: Optional[str] = None
-    image: Optional[str] = None
-
-
-class CourseUserRate(SQLModel, table=True):
-    user_id: Optional[int] = Field(
-        default=None, foreign_key="user.id", primary_key=True
-    )
-    course_id: Optional[int] = Field(
-        default=None, foreign_key="course.id", primary_key=True
-    )
-    rate: int
-
-
-class CourseCreate(CourseBase):
-    pass
-
-
-class CourseRead(CourseBase):
-    id: int
+if TYPE_CHECKING:
+    from .courses import Course
 
 
 class UserBase(SQLModel):
@@ -39,12 +20,6 @@ class User(UserBase, table=True):
     password: str = Field(max_length=256, min_length=6)
     created_at: datetime.datetime = datetime.datetime.now()
     course_rates: List["Course"] = Relationship(back_populates="user_rates", link_model=CourseUserRate)
-
-
-class Course(CourseBase, table=True):
-    # Id is Optional because it is auto generated
-    id: Optional[int] = Field(default=None, primary_key=True)
-    user_rates: List[User] = Relationship(back_populates="course_rates", link_model=CourseUserRate)
 
 
 class UserInput(SQLModel):
@@ -61,8 +36,8 @@ class UserInput(SQLModel):
 
 
 class UserLogin(SQLModel):
-    username: str
-    password: str
+    username: str = "default_username"
+    password: str = "default_password"
 
 
 class UserUpdate(SQLModel):
