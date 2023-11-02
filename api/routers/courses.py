@@ -1,5 +1,4 @@
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from fastapi import APIRouter, HTTPException, Response
 from sqlmodel import Session, select
 from typing import List
 
@@ -12,11 +11,6 @@ router = APIRouter(
     tags=["courses"],
     responses={404: {"description": "Not found"}},
 )
-
-
-class CourseRateRequest(BaseModel):
-    course_id: int
-    rate: int
 
 
 @router.get("/", response_model=List[CourseRead])
@@ -44,34 +38,30 @@ def post_course(course: CourseCreate):
         return new_course
 
 
-@router.post("/{id}/rate", response_model=CourseUserRate)
-def rate_course(course_rate_request: CourseRateRequest,
-                user: UserDependency):
-    course_user_rate = CourseUserRate(user_id=user.id,
-                                      course_id=course_rate_request.course_id,
-                                      rate=course_rate_request.rate)
+@router.post("/{id}/rate", response_model=CourseUserRate, status_code=200)
+def upsert_course_rate(id: int,
+                       rate: int,
+                       user: UserDependency,
+                       response: Response):
     with Session(engine) as session:
-        session.add(course_user_rate)
+        # Check if rate already exists
+        statement = select(CourseUserRate).where(
+            CourseUserRate.user_id == user.id,
+            CourseUserRate.course_id == id)
+        course_rate = session.exec(statement).first()
+
+        # If not, create a new one
+        if course_rate is None:
+            course_rate = CourseUserRate(user_id=user.id,
+                                         course_id=id,
+                                         rate=rate)
+            response.status_code = 201
+        # Else, update the existing one
+        else:
+            course_rate.rate = rate
+
+        session.add(course_rate)
         session.commit()
-        session.refresh(course_user_rate)
-        print("Created CourseUserRate: ", course_user_rate)
-        return course_user_rate
+        session.refresh(course_rate)
 
-
-@router.put("/{id}/rate", response_model=CourseUserRate)
-def update_course_rate(course_rate_request: CourseRateRequest,
-                       user: UserDependency):
-    with Session(engine) as session:
-        course_user_rate_statement = select(CourseUserRate).where(
-            CourseUserRate.user_id == user.id and
-            CourseUserRate.course_id == course_rate_request.course_id)
-        results = session.exec(course_user_rate_statement)
-        found_course_user_rate = results.one()
-        print("Found CourseUserRate to update:", found_course_user_rate)
-
-        found_course_user_rate.rate = course_rate_request.rate
-        session.add(found_course_user_rate)
-        session.commit()
-        session.refresh(found_course_user_rate)
-        print("Updated CourseUserRate:", found_course_user_rate)
-        return found_course_user_rate
+        return course_rate
