@@ -3,7 +3,7 @@ from fastapi import APIRouter, HTTPException
 from auth import AuthHandler
 from db import engine
 from sqlmodel import Session
-from models import UserInput, User, UserLogin
+from models.users import UserInput, User, UserLogin
 from repositories.user_repository import select_all_users, find_user, update_user
 from dependencies import UserDependency
 

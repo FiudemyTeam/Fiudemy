@@ -1,6 +1,8 @@
 from datetime import datetime
 from sqlmodel import SQLModel, create_engine, Session
-from models import Course, User, CourseUserRate
+from models.courses import Course
+from models.users import User
+from models.course_rates import CourseUserRate
 from auth import auth_handler
 
 sqlite_file_name = "database.db"
