@@ -3,15 +3,15 @@ from fastapi import APIRouter, HTTPException
 from auth import AuthHandler
 from db import engine
 from sqlmodel import Session
-from models import UserInput, User, UserLogin
-from repositories.user_repository import select_all_users, find_user, update_user
+from models import UserInput, User, UserLogin, UserUpdate, UserRead
+from repositories.user_repository import select_all_users, find_user
 from dependencies import UserDependency
 
-user_router = APIRouter()
+user_router = APIRouter(tags=['users'])
 auth_handler = AuthHandler()
 
 
-@user_router.post('/registration', status_code=201, tags=['users'],
+@user_router.post('/registration', status_code=201,
                   description='Register new user')
 def register(user: UserInput):
     users = select_all_users()
@@ -26,7 +26,7 @@ def register(user: UserInput):
         return u
 
 
-@user_router.post('/login', tags=['users'])
+@user_router.post('/login')
 def login(user: UserLogin):
     user_found = find_user(user.username)
     if not user_found:
@@ -40,19 +40,19 @@ def login(user: UserLogin):
     return {'token': token}
 
 
-@user_router.get('/users/me', tags=['users'])
+@user_router.get('/users/me', response_model=UserRead)
 def get_current_user(user: UserDependency):
     return user
 
 
-@user_router.get('/users/about_me', tags=['users'])
-def get_current_user_about_me(user: UserDependency):
-    return user.about_me
-
-
-@user_router.put('/update-about-me', tags=['users'])
-def update_about_me(about_me: str, user: UserDependency):
-    user_found = find_user(user.username)
-    user_found.about_me = about_me
-    update_user(user_found)
-    return {'message': 'About me updated successfully'}
+@user_router.patch('/users/me', response_model=UserRead)
+def update_current_user(new_user_data: UserUpdate,
+                        existing_user: UserDependency):
+    with Session(engine) as session:
+        new_user_data = new_user_data.dict(exclude_unset=True)
+        for key, value in new_user_data.items():
+            setattr(existing_user, key, value)
+        session.add(existing_user)
+        session.commit()
+        session.refresh(existing_user)
+        return existing_user
