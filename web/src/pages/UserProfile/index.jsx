@@ -11,13 +11,11 @@ import Box from "@mui/material/Box";
 import Copyright from "@components/Copyright";
 import LinearProgress from "@mui/material/LinearProgress";
 
-const UserProfile = () => {
-  // Simulated user data and courses
-  const userData = {
-    username: "ldiaz",
-    email: "ldiaz@example.com",
-  };
+import UserInformation from "./components/UserInformation";
+import CurrentCourses from "./components/CurrentCourses";
+import FinishedCourses from "./components/FinishedCourses";
 
+const UserProfile = () => {
   const coursesStarted = [
     {
       id: 1,
@@ -60,111 +58,14 @@ const UserProfile = () => {
     <div>
       <main>
         <Container sx={{ marginTop: "20px" }}>
-          <Card>
-            <CardContent>
-              <Typography variant="h5">Perfil</Typography>
-              <Typography>Username: {userData.username}</Typography>
-              <Typography>Email: {userData.email}</Typography>
-            </CardContent>
-          </Card>
-
-          <Card style={{ marginTop: "20px" }}>
-            <CardContent>
-              <Typography variant="h5" sx={{ mb: 1 }}>
-                Cursos empezados
-              </Typography>
-              <Grid container spacing={2}>
-                {coursesStarted.map((course) => (
-                  <Grid item key={course.id} xs={12} sm={6}>
-                    <Card
-                      sx={{
-                        height: "100%",
-                        display: "flex",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <CardMedia
-                        component="div"
-                        sx={{
-                          // 16:9
-                          pt: "56.25%",
-                        }}
-                        image={course.image}
-                      />
-                      <CardContent sx={{ flexGrow: 1 }}>
-                        <Typography gutterBottom variant="h5" component="h2">
-                          {course.name}
-                        </Typography>
-                        <Typography>{course.description}</Typography>
-                      </CardContent>
-                      <CardActions>
-                        <Link
-                          to={`/course/${course.id}`}
-                          style={{ textDecoration: "none" }}
-                        >
-                          <Button size="small">Ver</Button>
-                        </Link>
-                      </CardActions>
-                      <div style={{ padding: "16px" }}>
-                        <LinearProgress
-                          variant="determinate"
-                          value={course.progress}
-                          sx={{ mb: 1 }}
-                        />
-                        <Typography>Progreso: {course.progress}%</Typography>
-                      </div>
-                    </Card>
-                  </Grid>
-                ))}
-              </Grid>
-            </CardContent>
-          </Card>
-
-          <Card style={{ marginTop: "20px" }}>
-            <CardContent>
-              <Typography variant="h5" sx={{ mb: 1 }}>
-                Cursos terminados
-              </Typography>
-              <Grid container spacing={2}>
-                {coursesFinished.map((course) => (
-                  <Grid item key={course.id} xs={12} sm={6}>
-                    <Card
-                      sx={{
-                        height: "100%",
-                        display: "flex",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <CardMedia
-                        component="div"
-                        sx={{
-                          // 16:9
-                          pt: "56.25%",
-                        }}
-                        image={course.image}
-                      />
-                      <CardContent sx={{ flexGrow: 1 }}>
-                        <Typography gutterBottom variant="h5" component="h2">
-                          {course.name}
-                        </Typography>
-                        <Typography>{course.description}</Typography>
-                      </CardContent>
-                      <CardActions>
-                        <Button size="small">Ver</Button>
-                      </CardActions>
-                    </Card>
-                  </Grid>
-                ))}
-              </Grid>
-            </CardContent>
-          </Card>
+          <UserInformation />
+          <CurrentCourses courses={coursesStarted} />
+          <FinishedCourses courses={coursesFinished} />
         </Container>
       </main>
-      {/* Footer */}
       <Box sx={{ bgcolor: "background.paper", p: 6 }} component="footer">
         <Copyright />
       </Box>
-      {/* End footer */}
     </div>
   );
 };
