@@ -6,6 +6,7 @@ import Typography from "@mui/material/Typography";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import PersonIcon from "@mui/icons-material/Person";
 import SearchBar from "./components/SearchBar";
+import LogoutButton from "./components/LogoutButton";
 
 const Header = () => {
   return (
@@ -39,9 +40,7 @@ const Header = () => {
           >
             <PersonIcon />
           </Link>
-          <Link to="/login" style={{ textDecoration: "none", color: "white" }}>
-            <ExitToAppIcon />
-          </Link>
+          <LogoutButton />
         </div>
       </Toolbar>
     </AppBar>
