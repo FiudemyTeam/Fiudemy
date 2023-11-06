@@ -1,9 +1,4 @@
-import React from "react";
 import { Link } from "react-router-dom";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import AutoStoriesIcon from "@mui/icons-material/AutoStories";
-import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";

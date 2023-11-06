@@ -1,5 +1,4 @@
-import { useState, useEffect, useContext } from "react";
-import { Box, Card, Container, Grid, Select, Typography } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 import CoursesFilters from "./components/Filters";
 import CoursesGrid from "./components/Grid";

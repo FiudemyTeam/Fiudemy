@@ -1,4 +1,3 @@
-import * as React from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -150,7 +149,7 @@ export default function SignInSide() {
                     variant="body2"
                     sx={{ color: "black" }}
                   >
-                    Don't have an account? Sign Up
+                    Don&apos;t have an account? Sign Up
                   </Link>
                 </Grid>
               </Grid>

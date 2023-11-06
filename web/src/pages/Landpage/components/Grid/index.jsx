@@ -1,6 +1,5 @@
 import { useState, useEffect, useContext } from "react";
 import {
-  AppBar,
   Button,
   Card,
   CardActions,
@@ -10,7 +9,6 @@ import {
   Typography,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 import { SearchContext } from "@context/SearchContext";
 import { fetchCourses } from "./api";
 

@@ -1,6 +1,4 @@
-import React from "react";
-
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import Landpage from "@pages/Landpage";
 import LogIn from "@pages/Login";
 import Register from "@pages/Register";
