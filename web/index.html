@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="content-language" content="es" />
+    <link rel="icon" type="image/jpg" href="/favicon.ico" />
+    <link rel="alternate" hreflang="es" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fiudemy</title>
+  </head>
+  <script>
+    const showErrorOverlay = err => {
+        const ErrorOverlay = customElements.get('vite-error-overlay')
+        if (!ErrorOverlay) {return}
+        console.log(err)
+        const overlay = new ErrorOverlay(err)
+        document.body.appendChild(overlay)
+    }
+
+    window.addEventListener('error', showErrorOverlay)
+    window.addEventListener('unhandledrejection', ({reason}) => showErrorOverlay(reason))
+  </script>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

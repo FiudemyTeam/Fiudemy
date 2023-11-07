@@ -4,20 +4,26 @@ import datetime
 from pydantic import validator, EmailStr
 
 from .course_rates import CourseUserRate
+from .course_favorites import CourseUserFavorite
 
 if TYPE_CHECKING:
     from .courses import Course
 
 
-class User(SQLModel, table=True):
-    id: Optional[int] = Field(primary_key=True)
+class UserBase(SQLModel):
     username: str = Field(index=True)
-    password: str = Field(max_length=256, min_length=6)
     email: EmailStr
-    created_at: datetime.datetime = datetime.datetime.now()
-    course_rates: List["Course"] = Relationship(back_populates="user_rates",
-                                                link_model=CourseUserRate)
     about_me: Optional[str] = Field(max_length=300, default="")
+
+
+class User(UserBase, table=True):
+    id: Optional[int] = Field(primary_key=True)
+    password: str = Field(max_length=256, min_length=6)
+    created_at: datetime.datetime = datetime.datetime.now()
+    course_rates: List["Course"] = Relationship(
+        back_populates="user_rates", link_model=CourseUserRate)
+    course_favorites: List["Course"] = Relationship(
+        back_populates="user_favorites", link_model=CourseUserFavorite)
 
 
 class UserInput(SQLModel):
@@ -36,3 +42,13 @@ class UserInput(SQLModel):
 class UserLogin(SQLModel):
     username: str = "default_username"
     password: str = "default_password"
+
+
+class UserUpdate(SQLModel):
+    about_me: Optional[str] = Field(max_length=300, default="")
+    email: EmailStr = None
+
+
+class UserRead(UserBase):
+    id: int
+    created_at: datetime.datetime

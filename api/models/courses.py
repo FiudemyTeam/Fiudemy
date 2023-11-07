@@ -2,6 +2,8 @@ from typing import Optional, List, TYPE_CHECKING
 from sqlmodel import Field, SQLModel, Relationship
 
 from .course_rates import CourseUserRate
+from .course_favorites import CourseUserFavorite
+
 if TYPE_CHECKING:
     from .users import User
 
@@ -17,6 +19,9 @@ class Course(CourseBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     user_rates: List["User"] = Relationship(back_populates="course_rates",
                                             link_model=CourseUserRate)
+    user_favorites: List["User"] = Relationship(back_populates="course_favorites",
+                                                link_model=CourseUserFavorite)
+    category_id: Optional[int] = Field(default=None)
 
 
 class CourseCreate(CourseBase):

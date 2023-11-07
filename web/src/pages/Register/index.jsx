@@ -1,21 +1,20 @@
-import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import Copyright from './general/Copyright';
-import axios from 'axios'
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import CssBaseline from "@mui/material/CssBaseline";
+import TextField from "@mui/material/TextField";
+import Link from "@mui/material/Link";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Copyright from "@components/Copyright";
+import axios from "axios";
 
 // TODO remove, this demo shouldn't need to reset the theme.
 
-const base_url = 'http://localhost:8000'
+const base_url = "http://localhost:8000";
 const defaultTheme = createTheme();
 
 export default function SignUp() {
@@ -23,24 +22,24 @@ export default function SignUp() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const userData = {
-      username: data.get('username'),
-      is_student: data.get('is_student') === 'on',
-      email: data.get('email'),
-      password: data.get('password'),
-      password2: data.get('password')
+      username: data.get("username"),
+      is_student: data.get("is_student") === "on",
+      email: data.get("email"),
+      password: data.get("password"),
+      password2: data.get("password"),
     };
-  
+
     try {
       // Realiza una solicitud POST al endpoint de registro en tu API
-      console.log(userData)
+      console.log(userData);
       const response = await axios.post(`${base_url}/registration`, userData);
-  
+
       // Aquí puedes manejar la respuesta, por ejemplo, mostrar un mensaje de éxito o redirigir al usuario.
-      console.log('Registro exitoso:', response.data);
-      window.location.href = '/login';
+      console.log("Registro exitoso:", response.data);
+      window.location.href = "/login";
     } catch (error) {
       // Maneja los errores, por ejemplo, muestra un mensaje de error al usuario.
-      console.error('Error al registrar:', error);
+      console.error("Error al registrar:", error);
     }
   };
 
@@ -51,12 +50,12 @@ export default function SignUp() {
         <Box
           sx={{
             marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">

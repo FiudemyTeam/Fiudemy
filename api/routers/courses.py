@@ -1,8 +1,9 @@
 from fastapi import APIRouter, HTTPException, Response
-from sqlmodel import Session, select
-from typing import List
+from pydantic import BaseModel
+from sqlmodel import Session, select, and_
+from typing import List, Optional
 
-from models.courses import Course, CourseCreate, CourseRead, CourseUserRate
+from models.courses import Course, CourseCreate, CourseRead, CourseUserRate, CourseUserFavorite
 from dependencies import UserDependency
 from db import engine
 
@@ -14,9 +15,31 @@ router = APIRouter(
 
 
 @router.get("/", response_model=List[CourseRead])
-async def get_courses():
+async def get_courses(
+    category: Optional[int] = None,
+    searchString: Optional[str] = None,
+    rate: Optional[int] = None,
+    favorite: Optional[bool] = None,
+):
     with Session(engine) as session:
-        results = session.exec(select(Course))
+        query = select(Course)
+        filters = []
+
+        if category:
+            filters.append(Course.category_id == category)
+
+        if searchString:
+            filters.append(Course.name.like(f"%{searchString}%"))
+
+        if rate is not None:
+            filters.append(Course.user_rates.any(CourseUserRate.rate == rate))
+
+        if favorite:
+            filters.append(Course.user_favorites.any(
+                CourseUserFavorite.favorite == favorite))
+
+        query = query.where(and_(*filters))
+        results = session.exec(query)
         return results.all()
 
 
