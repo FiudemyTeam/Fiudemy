@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from sqlmodel import Session, select, and_
+from sqlalchemy.sql import functions
 from typing import List, Optional
 
 from models.courses import Course, CourseCreate, CourseRead, CourseUserRate, CourseUserFavorite
@@ -18,9 +19,12 @@ class CourseRateRequest(BaseModel):
     course_id: int
     rate: int
 
+class CourseFavRequest(BaseModel):
+    course_id: int
 
 @router.get("/", response_model=List[CourseRead])
 async def get_courses(
+    user: UserDependency,
     category: Optional[int] = None,
     searchString: Optional[str] = None,
     rate: Optional[int] = None,
@@ -41,7 +45,7 @@ async def get_courses(
 
         if favorite:
             filters.append(Course.user_favorites.any(
-                CourseUserFavorite.favorite == favorite))
+                and_(CourseUserFavorite.favorite == favorite, CourseUserFavorite.user_id == user.id)))
 
         query = query.where(and_(*filters))
         results = session.exec(query)
@@ -56,6 +60,16 @@ async def get_course(id: int):
             raise HTTPException(status_code=404, detail="Course not found")
         return course
 
+@router.get("/list/favs", response_model=List[int]) 
+async def get_fav_courses(user: UserDependency):
+    with Session(engine) as session:
+        query = select(CourseUserFavorite.course_id).where(
+            CourseUserFavorite.user_id == user.id
+        )
+        results = session.exec(query)
+
+        course_ids = [row for row in results]
+        return course_ids
 
 @router.post("/", response_model=CourseRead)
 def post_course(course: CourseCreate):
@@ -97,3 +111,28 @@ def update_course_rate(course_rate_request: CourseRateRequest,
         session.refresh(found_course_user_rate)
         print("Updated CourseUserRate:", found_course_user_rate)
         return found_course_user_rate
+
+@router.post("/{id}/fav", response_model=dict)
+def fav_course(course_fav_request: CourseFavRequest, user: UserDependency):
+    with Session(engine) as session:
+        # Buscar el registro existente por course_id y user.id
+        existing_fav = session.query(CourseUserFavorite).filter_by(
+            user_id=user.id, course_id=course_fav_request.course_id
+        ).first()
+
+        if existing_fav:
+            # Si existe un registro, bórralo
+            session.delete(existing_fav)
+            session.commit()
+            return {"message": "Course removed from favorites."}
+        else:
+            # Si no existe, crea un nuevo registro
+            course_user_fav = CourseUserFavorite(
+                user_id=user.id,
+                course_id=course_fav_request.course_id,
+                favorite=True
+            )
+            session.add(course_user_fav)
+            session.commit()
+            session.refresh(course_user_fav)
+            return course_user_fav
