@@ -4,7 +4,7 @@ from typing import List, Optional
 
 from models.courses import (
     Course, CourseCreate, CourseRead, CourseUserRate,
-    CourseUserFavorite, CourseReadWithMaterials
+    CourseUserFavorite
 )
 from dependencies import UserDependency, get_session
 
@@ -45,7 +45,7 @@ async def get_courses(
     return results.all()
 
 
-@router.get("/{id}", response_model=CourseReadWithMaterials)
+@router.get("/{id}", response_model=CourseRead)
 async def get_course(id: int,
                      session: Session = Depends(get_session)):
     course = session.get(Course, id)
