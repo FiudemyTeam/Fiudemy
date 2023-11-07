@@ -3,6 +3,7 @@ from sqlmodel import Field, SQLModel, Relationship
 
 from .course_rates import CourseUserRate
 from .course_favorites import CourseUserFavorite
+from .course_materials import CourseMaterial
 
 if TYPE_CHECKING:
     from .users import User
@@ -21,6 +22,7 @@ class Course(CourseBase, table=True):
                                             link_model=CourseUserRate)
     user_favorites: List["User"] = Relationship(back_populates="course_favorites",
                                                 link_model=CourseUserFavorite)
+    course_materials: List["CourseMaterial"] = Relationship(back_populates="course")
     category_id: Optional[int] = Field(default=None)
 
 
@@ -30,3 +32,7 @@ class CourseCreate(CourseBase):
 
 class CourseRead(CourseBase):
     id: int
+
+
+class CourseReadWithMaterials(CourseRead):
+    course_materials: List[CourseMaterial] = []
