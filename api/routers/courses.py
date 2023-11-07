@@ -6,6 +6,7 @@ from models.courses import (
     Course, CourseCreate, CourseRead, CourseUserRate,
     CourseUserFavorite, CourseReadWithMaterials
 )
+from models.course_materials import CourseMaterial, CourseMaterialCreate
 from dependencies import UserDependency, get_session
 
 
@@ -90,3 +91,20 @@ def upsert_course_rate(id: int,
     session.refresh(course_rate)
 
     return course_rate
+
+
+@router.post("/{id}/material", response_model=CourseReadWithMaterials, status_code=200)
+def add_course_material(id: int,
+                        material: CourseMaterialCreate,
+                        session: Session = Depends(get_session)):
+    course = session.get(Course, id)
+    if not course:
+        raise HTTPException(status_code=404, detail="Course not found")
+
+    material = CourseMaterial.from_orm(material)
+    material.course_id = id
+    session.add(material)
+    session.commit()
+    session.refresh(course)
+
+    return course
