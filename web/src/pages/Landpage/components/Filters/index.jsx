@@ -48,7 +48,7 @@ export default function App() {
                 <MenuItem value={undefined}>Todas</MenuItem>
                 <MenuItem value="1">Category 1</MenuItem>
                 <MenuItem value="2">Category 2</MenuItem>
-                <MenuItem value="2">Category 3</MenuItem>
+                <MenuItem value="3">Category 3</MenuItem>
               </Select>
             </FormControl>
           </Grid>
