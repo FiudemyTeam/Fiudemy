@@ -1,11 +1,10 @@
-from typing import Optional, List, TYPE_CHECKING
+from typing import Optional, List
 from sqlmodel import Field, SQLModel, Relationship
 
 from .course_rates import CourseUserRate
 from .course_favorites import CourseUserFavorite
 
-if TYPE_CHECKING:
-    from .users import User
+from .users import User
 
 
 class CourseBase(SQLModel):
@@ -30,3 +29,4 @@ class CourseCreate(CourseBase):
 
 class CourseRead(CourseBase):
     id: int
+    is_favorite: Optional[bool]

@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Container from "@mui/material/Container";
-import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
+import Typography from '@mui/material/Typography';
+import CourseView from "../CourseView";
+import ReviewView from "../CourseFeedback";
 
 const CourseDetail = () => {
   const { id } = useParams();
@@ -12,7 +14,7 @@ const CourseDetail = () => {
     // Simula la carga de detalles del curso desde una fuente de datos
     // Reemplaza esto con tu lógica de obtención de datos
     const fakeCourseData = {
-      name: "Curso de Programación Avanzada",
+      name: "Curso de Programación",
       description:
         "Aprende programación avanzada con ejemplos prácticos y proyectos emocionantes.",
       instructor: "John Doe",
@@ -50,8 +52,13 @@ const CourseDetail = () => {
           <Typography>Cargando detalles del curso...</Typography>
         )}
       </Container>
+      <br></br>
+      <br></br>
+      <CourseView/>
+      <ReviewView/>
     </div>
   );
 };
 
 export default CourseDetail;
+

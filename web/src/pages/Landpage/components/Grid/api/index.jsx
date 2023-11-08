@@ -16,3 +16,20 @@ export async function fetchCourses(params) {
     return [];
   }
 }
+
+export async function favoriteCourseToggle(course) {
+  try {
+    const params = {
+      method: course.is_favorite ? "DELETE" : "POST",
+      url: `${API_HOST}/courses/${course.id}/favorite`,
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    };
+    let response = await axios(params)
+    return response.data.is_favorite;
+  } catch (error) {
+    console.error("Error favoriteCourseToggle", error);
+    return course.is_favorite;
+  }
+}

@@ -1,7 +1,9 @@
 from fastapi import APIRouter, HTTPException, Response, Depends
-from sqlmodel import select, and_, Session
+from pydantic import BaseModel
+from sqlmodel import Session, select, and_
 from typing import List, Optional
 
+from models.users import User
 from models.courses import (
     Course, CourseCreate, CourseRead, CourseUserRate,
     CourseUserFavorite
@@ -18,13 +20,15 @@ router = APIRouter(
 
 @router.get("/", response_model=List[CourseRead])
 async def get_courses(
+    user: UserDependency,
     category: Optional[int] = None,
     searchString: Optional[str] = None,
     rate: Optional[int] = None,
     favorite: Optional[bool] = None,
     session: Session = Depends(get_session)
 ):
-    query = select(Course)
+    is_favorite_sub = select(Course.user_favorites.any(User.id == user.id)).label("is_favorite")
+    query = select(Course, is_favorite_sub)
     filters = []
 
     if category:
@@ -37,20 +41,31 @@ async def get_courses(
         filters.append(Course.user_rates.any(CourseUserRate.rate == rate))
 
     if favorite:
-        filters.append(Course.user_favorites.any(
-            CourseUserFavorite.favorite == favorite))
+        filters.append(Course.user_favorites.any(User.id == user.id))
 
     query = query.where(and_(*filters))
     results = session.exec(query)
-    return results.all()
+
+    courses = []
+    for course, is_favorite in results:
+        course = CourseRead.from_orm(course)
+        course.is_favorite = is_favorite
+        courses.append(course)
+    return courses
 
 
 @router.get("/{id}", response_model=CourseRead)
 async def get_course(id: int,
+                     user: UserDependency,
                      session: Session = Depends(get_session)):
-    course = session.get(Course, id)
+    is_favorite_sub = select(Course.user_favorites.any(User.id == user.id)).label("is_favorite")
+    query = select(Course, is_favorite_sub).where(Course.id == id)
+    (course, is_favorite) = session.exec(query).first()
     if not course:
         raise HTTPException(status_code=404, detail="Course not found")
+
+    course = CourseRead.from_orm(course)
+    course.is_favorite = is_favorite
     return course
 
 
@@ -88,5 +103,32 @@ def upsert_course_rate(id: int,
     session.add(course_rate)
     session.commit()
     session.refresh(course_rate)
-
     return course_rate
+
+
+@router.post("/{id}/favorite", response_model=dict)
+def favorite_course(id: int,
+                    user: UserDependency,
+                    session: Session = Depends(get_session)):
+    existing_fav = session.query(CourseUserFavorite).filter_by(user_id=user.id,
+                                                               course_id=id).first()
+    if not existing_fav:
+        course_user_fav = CourseUserFavorite(
+            user_id=user.id,
+            course_id=id
+        )
+        session.add(course_user_fav)
+        session.commit()
+    return {"is_favorite": True}
+
+
+@router.delete("/{id}/favorite", response_model=dict)
+def unfavorite_course(id: int,
+                      user: UserDependency,
+                      session: Session = Depends(get_session)):
+    existing_fav = session.query(CourseUserFavorite).filter_by(user_id=user.id,
+                                                               course_id=id).first()
+    if existing_fav:
+        session.delete(existing_fav)
+        session.commit()
+    return {"is_favorite": False}

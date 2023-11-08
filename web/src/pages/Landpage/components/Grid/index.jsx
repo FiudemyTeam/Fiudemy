@@ -7,10 +7,12 @@ import {
   CardMedia,
   Grid,
   Typography,
+  IconButton,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import { SearchContext } from "@context/SearchContext";
-import { fetchCourses } from "./api";
+import { fetchCourses, favoriteCourseToggle } from "./api";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 
 const CoursesGrid = () => {
   const { searchString, category, rate, favorite } = useContext(SearchContext);
@@ -18,17 +20,30 @@ const CoursesGrid = () => {
   const [courses, setCourses] = useState([]);
 
   useEffect(() => {
-    async function fc() {
-      const data = await fetchCourses({
-        searchString: searchString ?? undefined,
-        category: category ?? undefined,
-        rate: rate ?? undefined,
-        favorite: favorite ?? undefined,
-      });
-      setCourses(data);
-    }
-    fc();
+    fetchData()
+
   }, [searchString, category, rate, favorite]);
+
+  async function fetchData() {
+    const data = await fetchCourses({
+      searchString: searchString ?? undefined,
+      category: category ?? undefined,
+      rate: rate ?? undefined,
+      favorite: favorite ?? undefined,
+    });
+    setCourses(data);
+  }
+
+
+  const handleFavoriteClick = async (course) => {
+    const is_favorite = await favoriteCourseToggle(course);
+    setCourses(courses.map((c) => {
+      if (c.id === course.id) {
+        c.is_favorite = is_favorite;
+      }
+      return c;
+    }));
+  };
 
   return (
     <Grid container spacing={4}>
@@ -58,6 +73,11 @@ const CoursesGrid = () => {
               >
                 <Button size="small">Ver</Button>
               </Link>
+              <IconButton
+                color={course.is_favorite ? "error" : "default"}
+                onClick={() => handleFavoriteClick(course)}>
+                <FavoriteIcon />
+              </IconButton>
             </CardActions>
           </Card>
         </Grid>
