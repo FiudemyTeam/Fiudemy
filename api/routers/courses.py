@@ -106,7 +106,6 @@ def upsert_course_rate(id: int,
     session.add(course_rate)
     session.commit()
     session.refresh(course_rate)
-
     return course_rate
 
 
