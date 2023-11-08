@@ -7,6 +7,7 @@ import CourseDetail from "@pages/CourseDetail";
 import Header from "@components/Header";
 import { SearchContextProvider } from "@context/SearchContext";
 import CreateCourseView from "../../pages/CourseCreation";
+import CourseFeedback from "../../pages/CourseFeedback"
 
 const WithHeader = ({ component }) => (
   <>

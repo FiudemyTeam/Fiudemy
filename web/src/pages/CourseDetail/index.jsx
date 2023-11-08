@@ -4,6 +4,7 @@ import Container from "@mui/material/Container";
 import Paper from "@mui/material/Paper";
 import Typography from '@mui/material/Typography';
 import CourseView from "../CourseView";
+import ReviewView from "../CourseFeedback";
 
 const CourseDetail = () => {
   const { id } = useParams();
@@ -54,6 +55,7 @@ const CourseDetail = () => {
       <br></br>
       <br></br>
       <CourseView/>
+      <ReviewView/>
     </div>
   );
 };
