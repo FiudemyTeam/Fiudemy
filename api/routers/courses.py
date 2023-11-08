@@ -41,10 +41,7 @@ async def get_courses(
         filters.append(Course.user_rates.any(CourseUserRate.rate == rate))
 
     if favorite:
-        filters.append(Course.user_favorites.any(
-            and_(CourseUserFavorite.favorite == favorite,
-                 CourseUserFavorite.user_id == user.id)
-        ))
+        filters.append(Course.user_favorites.any(User.id == user.id))
 
     query = query.where(and_(*filters))
     results = session.exec(query)
