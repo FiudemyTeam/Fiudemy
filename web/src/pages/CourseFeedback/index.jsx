@@ -52,7 +52,7 @@ const ReviewView = () => {
   return (
     <div>
       <Container sx={{ marginTop: "20px" }}>
-      <Typography variant="h4">Reseñas</Typography>
+      <Typography variant="h4">Opiniones de curso</Typography>
     <div><br></br>
       <Rating name="rating" value={rating} onChange={handleRatingChange} />
       <TextField

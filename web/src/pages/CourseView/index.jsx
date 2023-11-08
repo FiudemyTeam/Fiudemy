@@ -20,7 +20,7 @@ const databaseData = [
   {
     id: 1,
     title: 'Introducción a Python',
-    content: 'Primeros pasos en Python',
+    content: '¡Bienvenidos al emocionante mundo de la programación con Python! Este módulo es el punto de partida perfecto para aquellos que desean aprender a programar desde cero o para quienes desean expandir sus habilidades en programación. Python es conocido por su sintaxis legible y su versatilidad, lo que lo convierte en un lenguaje de programación ideal para principiantes.',
   },
   {
     id: 2,
