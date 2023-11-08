@@ -44,7 +44,7 @@ def seed_db():
     ]
 
     course_user_favorites = [
-        CourseUserFavorite(user_id=1, course_id=1, favorite=True),
+        CourseUserFavorite(user_id=1, course_id=1),
     ]
 
     course_user_rates = [
