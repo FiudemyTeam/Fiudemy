@@ -6,7 +6,7 @@ from typing import List, Optional
 from models.users import User
 from models.courses import (
     Course, CourseCreate, CourseRead, CourseUserRate,
-    CourseUserFavorite
+    CourseUserFavorite, Category
 )
 from dependencies import UserDependency, get_session
 
@@ -135,3 +135,9 @@ def unfavorite_course(id: int,
         session.delete(existing_fav)
         session.commit()
     return {"is_favorite": False}
+
+@router.get("/categories/", response_model=List[Category])
+async def get_categories(session: Session = Depends(get_session)):
+    categories = session.exec(select(Category)).all()
+    return categories
+    

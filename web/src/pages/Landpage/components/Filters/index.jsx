@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import {
   Grid,
   Select,
@@ -15,8 +15,11 @@ import StarIcon from "@mui/icons-material/Star";
 
 import { SearchContext } from "@context/SearchContext";
 
+const API_HOST = import.meta.env.VITE_API_HOST;
+
 export default function App() {
   const [open, setOpen] = useState(false);
+  const [categories, setCategories] = useState([]);
 
   const { category, setCategory, rate, setRate, favorite, setFavorite } =
     useContext(SearchContext);
@@ -24,6 +27,14 @@ export default function App() {
   const handleChange = () => {
     setOpen((prev) => !prev);
   };
+
+  useEffect(() => {
+    // Hacer la solicitud para obtener las categorías desde tu API
+    fetch(`${API_HOST}/courses/categories/`, {headers: {Authorization: `Bearer ${localStorage.getItem("token")}`,}})
+      .then((response) => response.json())
+      .then((data) => setCategories(data))
+      .catch((error) => console.error("Error fetching categories:", error));
+  }, []); // El segundo argumento [] asegura que el efecto se ejecute solo una vez al montar el componente
 
   return (
     <Container>
@@ -46,9 +57,11 @@ export default function App() {
                 labelId="cat-label"
               >
                 <MenuItem value={undefined}>Todas</MenuItem>
-                <MenuItem value="1">Category 1</MenuItem>
-                <MenuItem value="2">Category 2</MenuItem>
-                <MenuItem value="3">Category 3</MenuItem>
+                {categories.map((category) => (
+                  <MenuItem key={category.id} value={category.id}>
+                    {category.name}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
           </Grid>
