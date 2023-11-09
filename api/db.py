@@ -65,7 +65,7 @@ def seed_db():
         Category(id=2, name="Diseño"),
         Category(id=3, name="Cocina"),
         Category(id=4, name="Inversiones"),
-        Category(id=5, name="Otros"),
+        Category(id=5, name="Otras"),
     ]
 
 
