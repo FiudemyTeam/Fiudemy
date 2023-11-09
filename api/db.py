@@ -48,7 +48,7 @@ def seed_db():
     ]
 
     course_user_rates = [
-        CourseUserRate(user_id=1, course_id=1, rate=5),
+        CourseUserRate(user_id=1, course_id=1, rate=5, comment='Very good course!'),
     ]
 
     default_user = User(

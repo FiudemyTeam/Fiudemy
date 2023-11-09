@@ -10,3 +10,4 @@ class CourseUserRate(SQLModel, table=True):
         default=None, foreign_key="course.id", primary_key=True
     )
     rate: int
+    comment: str
