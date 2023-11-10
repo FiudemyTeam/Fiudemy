@@ -6,6 +6,7 @@ from .course_favorites import CourseUserFavorite
 
 from .users import User
 
+# Course
 
 class CourseBase(SQLModel):
     name: str = Field(index=True)
@@ -32,3 +33,9 @@ class CourseRead(CourseBase):
     id: int
     is_favorite: Optional[bool]
     teacher_id: Optional[int]
+
+# Course Category
+
+class Category(SQLModel, table=True):
+    id: str = Field(default=None, index=True, primary_key=True)
+    name: str
