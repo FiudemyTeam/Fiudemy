@@ -21,6 +21,7 @@ class Course(CourseBase, table=True):
     user_favorites: List["User"] = Relationship(back_populates="course_favorites",
                                                 link_model=CourseUserFavorite)
     category_id: Optional[int] = Field(default=None)
+    teacher_id: Optional[int] = Field(default=None, foreign_key="user.id")
 
 
 class CourseCreate(CourseBase):
@@ -30,3 +31,4 @@ class CourseCreate(CourseBase):
 class CourseRead(CourseBase):
     id: int
     is_favorite: Optional[bool]
+    teacher_id: Optional[int]

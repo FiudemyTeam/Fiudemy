@@ -71,8 +71,10 @@ async def get_course(id: int,
 
 @router.post("/", response_model=CourseRead)
 def post_course(course: CourseCreate,
+                user: UserDependency,
                 session: Session = Depends(get_session)):
     session.add(new_course := Course.from_orm(course))
+    new_course.teacher_id = user.id
     session.commit()
     session.refresh(new_course)
     return new_course
