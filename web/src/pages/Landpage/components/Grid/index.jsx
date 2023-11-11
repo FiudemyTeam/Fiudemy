@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import { SearchContext } from "@context/SearchContext";
+import RatingStars from "../RatingStars";
 import { fetchCourses, favoriteCourseToggle } from "./api";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 
@@ -78,6 +79,7 @@ const CoursesGrid = () => {
                 onClick={() => handleFavoriteClick(course)}>
                 <FavoriteIcon />
               </IconButton>
+              <RatingStars rate={course.id % 6} fontSize="small"/>
             </CardActions>
           </Card>
         </Grid>

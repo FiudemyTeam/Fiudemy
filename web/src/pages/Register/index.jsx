@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -18,6 +19,8 @@ const base_url = "http://localhost:8000";
 const defaultTheme = createTheme();
 
 export default function SignUp() {
+  const [error, setError] = useState("");
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -31,15 +34,16 @@ export default function SignUp() {
 
     try {
       // Realiza una solicitud POST al endpoint de registro en tu API
-      console.log(userData);
       const response = await axios.post(`${base_url}/registration`, userData);
 
       // Aquí puedes manejar la respuesta, por ejemplo, mostrar un mensaje de éxito o redirigir al usuario.
       console.log("Registro exitoso:", response.data);
+      setError("");
       window.location.href = "/login";
     } catch (error) {
       // Maneja los errores, por ejemplo, muestra un mensaje de error al usuario.
       console.error("Error al registrar:", error);
+      setError(Array.isArray(error.response.data.detail) ? error.response.data.detail[0].msg : error.response.data.detail);
     }
   };
 
@@ -61,6 +65,11 @@ export default function SignUp() {
           <Typography component="h1" variant="h5">
             Sign up
           </Typography>
+          {error && (
+            <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+              {error}
+            </Typography>
+          )}
           <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12}>

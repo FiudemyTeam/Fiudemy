@@ -3,10 +3,10 @@ import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 import { Link } from "react-router-dom";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import ExitToAppIcon from "@mui/icons-material/ExitToApp";
-import PersonIcon from "@mui/icons-material/Person";
 import SearchBar from "./components/SearchBar";
 import LogoutButton from "./components/LogoutButton";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChalkboardTeacher, faUserGraduate } from "@fortawesome/free-solid-svg-icons";
 
 const Header = () => {
   return (
@@ -33,12 +33,20 @@ const Header = () => {
         </Link>
         <div style={{ flexGrow: 1 }} />
         <SearchBar />
+        <Link
+          to="/profesor"
+          style={{ textDecoration: "none", color: "white", marginRight: 20 }}
+          title="Perfil Profesor"
+        >
+          <FontAwesomeIcon icon={faChalkboardTeacher} size="lg"/>
+        </Link>
         <div style={{ display: "flex", alignItems: "center" }}>
           <Link
             to="/profile"
             style={{ textDecoration: "none", color: "white", marginRight: 20 }}
+            title="Perfil Alumno"
           >
-            <PersonIcon />
+            <FontAwesomeIcon icon={faUserGraduate} size="lg"/>
           </Link>
           <LogoutButton />
         </div>
