@@ -5,6 +5,7 @@ from pydantic import validator, EmailStr
 
 from .course_rates import CourseUserRate
 from .course_favorites import CourseUserFavorite
+from .course_subscriptions import CourseUserSubscription
 
 if TYPE_CHECKING:
     from .courses import Course
@@ -24,6 +25,8 @@ class User(UserBase, table=True):
         back_populates="user_rates", link_model=CourseUserRate)
     course_favorites: List["Course"] = Relationship(
         back_populates="user_favorites", link_model=CourseUserFavorite)
+    course_subscriptions: List["Course"] = Relationship(
+        back_populates="user_subscriptions", link_model=CourseUserSubscription)
 
 
 class UserInput(SQLModel):

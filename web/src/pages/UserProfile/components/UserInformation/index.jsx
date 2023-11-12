@@ -56,64 +56,72 @@ const UserInformation = () => {
   };
 
   return (
-    <StyledCard>
-      <CardContent>
-        <Title variant="h5">Perfil</Title>
-        <TextField
-          label="Username"
-          name="username"
-          value={username || ""}
-          onChange={handleInputChange}
-          disabled={!isEditing}
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          label="Email"
-          name="email"
-          value={email || ""}
-          onChange={handleInputChange}
-          disabled={!isEditing}
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          label="Sobre mi"
-          name="about_me"
-          value={about_me || ""}
-          onChange={handleInputChange}
-          disabled={!isEditing}
-          fullWidth
-          margin="normal"
-        />
-        {isEditing ? (
-          <>
-            <Button
-              variant="contained"
-              onClick={handleSave}
-              sx={{
-                mr: 1,
-                color: "white",
-                backgroundColor: "success.dark",
-              }}
-            >
-              Guardar
+    <div style={{ marginTop: "80px" }}>
+      <Title variant="h4" style={{ marginBottom: "20px" }}>
+        Perfil
+      </Title>
+      <StyledCard>
+        <CardContent>
+          <TextField
+            label="Username"
+            name="username"
+            value={username || ""}
+            onChange={handleInputChange}
+            disabled={!isEditing}
+            fullWidth
+            margin="normal"
+            size="small"
+          />
+          <TextField
+            label="Email"
+            name="email"
+            value={email || ""}
+            onChange={handleInputChange}
+            disabled={!isEditing}
+            fullWidth
+            margin="normal"
+            size="small"
+          />
+          <TextField
+            label="Sobre mi"
+            name="about_me"
+            value={about_me || ""}
+            onChange={handleInputChange}
+            disabled={!isEditing}
+            fullWidth
+            margin="normal"
+            size="small"
+            style={{ marginBottom: "30px" }}
+          />
+          {isEditing ? (
+            <>
+              <Button
+                variant="contained"
+                onClick={handleSave}
+                sx={{
+                  mr: 1,
+                  color: "white",
+                  backgroundColor: "success.dark",
+                }}
+              >
+                Guardar
+              </Button>
+              <Button
+                variant="contained"
+                onClick={() => setIsEditing(false)}
+                sx={{ mx: 1, color: "error", backgroundColor: "error.main" }}
+              >
+                Cancelar
+              </Button>
+            </>
+          ) : (
+            <Button variant="contained" onClick={handleEdit}>
+              Editar
             </Button>
-            <Button
-              variant="contained"
-              onClick={() => setIsEditing(false)}
-              sx={{ mx: 1, color: "error", backgroundColor: "error.main" }}
-            >
-              Cancelar
-            </Button>
-          </>
-        ) : (
-          <Button variant="contained" onClick={handleEdit}>
-            Editar
-          </Button>
-        )}
-      </CardContent>
-    </StyledCard>
+          )}
+        </CardContent>
+      </StyledCard>
+    </div>
   );
 };
 

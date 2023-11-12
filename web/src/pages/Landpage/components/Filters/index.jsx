@@ -30,7 +30,9 @@ export default function App() {
 
   useEffect(() => {
     // Hacer la solicitud para obtener las categorías desde tu API
-    fetch(`${API_HOST}/courses/categories/`, {headers: {Authorization: `Bearer ${localStorage.getItem("token")}`,}})
+    fetch(`${API_HOST}/courses/categories/`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    })
       .then((response) => response.json())
       .then((data) => setCategories(data))
       .catch((error) => console.error("Error fetching categories:", error));
