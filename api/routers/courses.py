@@ -9,6 +9,7 @@ from models.courses import (
     CourseUserFavorite, Category
 )
 from dependencies import UserDependency, get_session
+from models.course_subscriptions import CourseUserSubscription
 
 
 router = APIRouter(
@@ -27,7 +28,8 @@ async def get_courses(
     favorite: Optional[bool] = None,
     session: Session = Depends(get_session)
 ):
-    is_favorite_sub = select(Course.user_favorites.any(User.id == user.id)).label("is_favorite")
+    is_favorite_sub = select(Course.user_favorites.any(
+        User.id == user.id)).label("is_favorite")
     query = select(Course, is_favorite_sub)
     filters = []
 
@@ -58,14 +60,19 @@ async def get_courses(
 async def get_course(id: int,
                      user: UserDependency,
                      session: Session = Depends(get_session)):
-    is_favorite_sub = select(Course.user_favorites.any(User.id == user.id)).label("is_favorite")
-    query = select(Course, is_favorite_sub).where(Course.id == id)
-    (course, is_favorite) = session.exec(query).first()
+    is_favorite_sub = select(Course.user_favorites.any(
+        User.id == user.id)).label("is_favorite")
+    is_subscribed_sub = select(Course.user_subscriptions.any(
+        User.id == user.id)).label("is_subscribed")
+    query = select(Course, is_favorite_sub,
+                   is_subscribed_sub).where(Course.id == id)
+    (course, is_favorite, is_subscribed) = session.exec(query).first()
     if not course:
         raise HTTPException(status_code=404, detail="Course not found")
 
     course = CourseRead.from_orm(course)
     course.is_favorite = is_favorite
+    course.is_subscribed = is_subscribed
     return course
 
 
@@ -138,8 +145,35 @@ def unfavorite_course(id: int,
         session.commit()
     return {"is_favorite": False}
 
+
 @router.get("/categories/", response_model=List[Category])
 async def get_categories(session: Session = Depends(get_session)):
     categories = session.exec(select(Category)).all()
     return categories
-    
+
+
+@router.post("/{id}/subscribe", response_model=CourseUserFavorite)
+def subscribe_course(id: int,
+                     user: UserDependency,
+                     session: Session = Depends(get_session)):
+    existing_sub = session.query(CourseUserSubscription).filter_by(user_id=user.id,
+                                                                   course_id=id).first()
+    if not existing_sub:
+        course_user_sub = CourseUserSubscription(
+            user_id=user.id,
+            course_id=id
+        )
+        session.add(course_user_sub)
+        session.commit()
+    return {"is_subscribed": True}
+
+
+@router.get("/subscribed/", response_model=List[CourseRead])
+def get_subscribed_courses(user: UserDependency, session: Session = Depends(get_session)):
+    is_subscribed_sub = select(Course.user_subscriptions.any(
+        User.id == user.id)).label("is_subscribed")
+    query = select(Course, is_subscribed_sub).join(
+        Course.user_subscriptions).where(User.id == user.id)
+    courses = session.exec(query).scalars().all()
+
+    return [CourseRead.from_orm(course) for course in courses]
