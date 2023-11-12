@@ -1,53 +1,58 @@
-import React, { useState } from 'react';
-import Checkbox from '@mui/material/Checkbox';
-import AppBar from '@mui/material/AppBar';
-import Button from '@mui/material/Button';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CssBaseline from '@mui/material/CssBaseline';
-import Grid from '@mui/material/Grid';
-import Stack from '@mui/material/Stack';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import React, { useState, useEffect } from "react";
+import { Checkbox, Button } from "@mui/material";
+import {
+  AppBar,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Card,
+  CardActions,
+  CssBaseline,
+  Grid,
+  Stack,
+  Box,
+  Toolbar,
+  Typography,
+  Container,
+  createTheme,
+  ThemeProvider,
+  Paper,
+} from "@mui/material";
+import { subscribe } from "./api";
 
 const databaseData = [
   {
     id: 1,
-    title: 'Introducción a Python',
-    content: '¡Bienvenidos al emocionante mundo de la programación con Python! Este módulo es el punto de partida perfecto para aquellos que desean aprender a programar desde cero o para quienes desean expandir sus habilidades en programación. Python es conocido por su sintaxis legible y su versatilidad, lo que lo convierte en un lenguaje de programación ideal para principiantes.',
+    title: "Introducción a Python",
+    content:
+      "¡Bienvenidos al emocionante mundo de la programación con Python! Este módulo es el punto de partida perfecto para aquellos que desean aprender a programar desde cero o para quienes desean expandir sus habilidades en programación. Python es conocido por su sintaxis legible y su versatilidad, lo que lo convierte en un lenguaje de programación ideal para principiantes.",
   },
   {
     id: 2,
-    title: 'Fundamentos de Programación en Python',
-    content: 'Conceptos clave de programación',
+    title: "Fundamentos de Programación en Python",
+    content: "Conceptos clave de programación",
   },
   {
     id: 3,
-    title: 'Estructuras de Control en Python',
-    content: 'Control de flujo en Python',
+    title: "Estructuras de Control en Python",
+    content: "Control de flujo en Python",
   },
   {
     id: 4,
-    title: 'Funciones y Módulos en Python',
-    content: 'Modularización y reutilización de código',
+    title: "Funciones y Módulos en Python",
+    content: "Modularización y reutilización de código",
   },
   {
     id: 5,
-    title: 'Trabajo con Listas y Tuplas en Python',
-    content: 'Manipulación de datos estructurados',
+    title: "Trabajo con Listas y Tuplas en Python",
+    content: "Manipulación de datos estructurados",
   },
 ];
 
-const defaultTheme = createTheme();
-
-export default function CourseView() {
+export default function CourseView({ data }) {
+  const [subscribed, setSubscribed] = useState(data?.is_subscribed);
   const [expandedCourse, setExpandedCourse] = useState(null);
+  const [selectedCourses, setSelectedCourses] = useState([]);
 
   const handleCourseExpansion = (courseId) => {
     if (expandedCourse === courseId) {
@@ -57,29 +62,33 @@ export default function CourseView() {
     }
   };
 
-  const [selectedCourses, setSelectedCourses] = useState([]); 
-
   const handleCourseSelection = (courseId) => {
     if (selectedCourses.includes(courseId)) {
-      setSelectedCourses(selectedCourses.filter(id => id !== courseId));
+      setSelectedCourses(selectedCourses.filter((id) => id !== courseId));
     } else {
       setSelectedCourses([...selectedCourses, courseId]);
     }
   };
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  const handleSubscription = async () => {
+    try {
+      await subscribe({ course_id: data.id });
+      setSubscribed(true);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
-    <ThemeProvider theme={defaultTheme}>
-      <CssBaseline />
-      <AppBar position="relative">
-        <Toolbar>
-          <div style={{ borderBottom: '1px dashed black' }}>
-          </div>
-        </Toolbar>
-      </AppBar>
+    <>
       <main>
         <Box
           sx={{
-            bgcolor: 'background.paper',
+            bgcolor: "background.paper",
             pt: 8,
             pb: 6,
           }}
@@ -92,18 +101,88 @@ export default function CourseView() {
               color="text.primary"
               gutterBottom
             >
-              Iniciación a la programación en Python
+              {data?.name}
             </Typography>
-            <Typography variant="h5" align="center" color="text.secondary" paragraph>
-              Curso básico de programación en Python para principiantes, abordando conceptos esenciales y la sintaxis de Python.
+            <Typography
+              variant="h5"
+              align="center"
+              color="text.secondary"
+              paragraph
+            >
+              {data?.description}
             </Typography>
+            <img
+              src={data?.image}
+              alt={data?.name}
+              style={{
+                width: "70%",
+                height: "50%",
+                display: "block",
+                margin: "auto",
+              }}
+            />
+
+            <Paper
+              elevation={0}
+              style={{
+                width: "85%",
+                display: "block",
+                margin: "auto",
+                padding: "20px",
+                display: "flex",
+                justifyContent: "space-evenly",
+              }}
+            >
+              <div>
+                <Typography
+                  variant="subtitle1"
+                  textAlign="center"
+                  fontWeight="bold"
+                >
+                  Instructor
+                </Typography>
+                <Typography variant="subtitle2">Enrique Martinez</Typography>
+              </div>
+              <div>
+                <Typography
+                  variant="subtitle1"
+                  textAlign="center"
+                  fontWeight="bold"
+                >
+                  Duración
+                </Typography>
+                <Typography variant="subtitle2" textAlign="center">
+                  30min.
+                </Typography>
+              </div>
+              <div>
+                <Typography
+                  variant="subtitle1"
+                  textAlign="center"
+                  fontWeight="bold"
+                >
+                  Nivel
+                </Typography>
+                <Typography variant="subtitle2" textAlign="center">
+                  Básico
+                </Typography>
+              </div>
+            </Paper>
             <Stack
               sx={{ pt: 4 }}
               direction="row"
               spacing={2}
               justifyContent="center"
             >
-              <Button variant="contained">Inscribirse al curso</Button>
+              {data?.is_subscribed || subscribed ? (
+                <Button variant="contained" disabled>
+                  Inscripto
+                </Button>
+              ) : (
+                <Button onClick={handleSubscription} variant="contained">
+                  Inscribirse al curso
+                </Button>
+              )}
               <Button variant="outlined">Inscribirse a la certificación</Button>
             </Stack>
           </Container>
@@ -120,19 +199,17 @@ export default function CourseView() {
                 <Checkbox
                   checked={selectedCourses.includes(course.id)}
                   onChange={() => handleCourseSelection(course.id)}
-                  sx={{ marginLeft: 'auto' }}
+                  sx={{ marginLeft: "auto" }}
                 />
               </AccordionSummary>
               <AccordionDetails>
-                <Typography>
-                  {course.content}
-                </Typography>
+                <Typography>{course.content}</Typography>
               </AccordionDetails>
             </Accordion>
           ))}
         </Container>
       </main>
-      <Box sx={{ bgcolor: 'background.paper', p: 6 }} component="footer">
+      <Box sx={{ bgcolor: "background.paper", p: 6 }} component="footer">
         <Typography variant="h6" align="center" gutterBottom>
           Fiudemy
         </Typography>
@@ -145,6 +222,6 @@ export default function CourseView() {
           Continua aprendiendo con nosotros!
         </Typography>
       </Box>
-    </ThemeProvider>
+    </>
   );
 }

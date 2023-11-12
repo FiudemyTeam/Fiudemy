@@ -1,22 +1,28 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 import { Link } from "react-router-dom";
-import Container from "@mui/material/Container";
-import Typography from "@mui/material/Typography";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import CardActions from "@mui/material/CardActions";
-import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
-import LinearProgress from "@mui/material/LinearProgress";
+import {
+  Container,
+  Typography,
+  Card,
+  CardContent,
+  CardMedia,
+  CardActions,
+  Button,
+  Grid,
+  LinearProgress,
+} from "@mui/material";
 
-const FinishedCourses = ({ courses }) => {
+const CurrentCourses = ({ courses, showProgress = false, title = "" }) => {
+  if (courses.length === 0) {
+    return <> </>;
+  }
+
   return (
     <Card style={{ marginTop: "20px" }}>
       <CardContent>
         <Typography variant="h5" sx={{ mb: 1 }}>
-          Cursos terminados
+          {title}
         </Typography>
         <Grid container spacing={2}>
           {courses.map((course) => (
@@ -43,8 +49,23 @@ const FinishedCourses = ({ courses }) => {
                   <Typography>{course.description}</Typography>
                 </CardContent>
                 <CardActions>
-                  <Button size="small">Ver</Button>
+                  <Link
+                    to={`/course/${course.id}`}
+                    style={{ textDecoration: "none" }}
+                  >
+                    <Button size="small">Ver</Button>
+                  </Link>
                 </CardActions>
+                {showProgress && (
+                  <div style={{ padding: "16px" }}>
+                    <LinearProgress
+                      variant="determinate"
+                      value={course.progress}
+                      sx={{ mb: 1 }}
+                    />
+                    <Typography>Progreso: {course.progress}%</Typography>
+                  </div>
+                )}
               </Card>
             </Grid>
           ))}
@@ -54,4 +75,4 @@ const FinishedCourses = ({ courses }) => {
   );
 };
 
-export default FinishedCourses;
+export default CurrentCourses;

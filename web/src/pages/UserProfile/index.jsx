@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
@@ -12,58 +13,51 @@ import Copyright from "@components/Copyright";
 import LinearProgress from "@mui/material/LinearProgress";
 
 import UserInformation from "./components/UserInformation";
-import CurrentCourses from "./components/CurrentCourses";
-import FinishedCourses from "./components/FinishedCourses";
+import Courses from "./components/Courses";
+import { getSubscribedCourses, fetchFavCourses } from "./api";
 
 const UserProfile = () => {
-  const coursesStarted = [
-    {
-      id: 1,
-      name: "Curso de Desarrollo Web",
-      progress: 30,
-      description:
-        "Aprende a crear aplicaciones web modernas con las últimas tecnologías.",
-      image: "https://i.ytimg.com/vi/bYOjmW-740M/maxresdefault.jpg",
-    },
-    {
-      id: 2,
-      name: "Diseño Gráfico Avanzado",
-      progress: 50,
-      description:
-        "Perfecciona tus habilidades de diseño gráfico y crea proyectos impresionantes.",
-      image:
-        "https://institutonoa.com.ar/wp-content/uploads/2021/10/diseno_grafico.jpg",
-    },
-  ];
+  const [startedCourses, setStartedCourses] = useState([]);
+  const [favCourses, setFavCourses] = useState([]);
 
-  const coursesFinished = [
-    {
-      id: 3,
-      name: "Machine Learning con Python",
-      description:
-        "Explora el mundo del machine learning y la inteligencia artificial con Python.",
-      image:
-        "https://escuelafullstack.com/web/image/slide.channel/14/image_512",
-    },
-    {
-      id: 4,
-      name: "Curso de Marketing Digital",
-      description:
-        "Domina las estrategias de marketing digital para hacer crecer tu negocio.",
-      image: "https://i.ytimg.com/vi/sRAlwvGz-vo/maxresdefault.jpg",
-    },
-  ];
+  useEffect(() => {
+    getSubscribedCourses()
+      .then((courses) => {
+        courses = courses.map((course) => {
+          const progress = 50;
+          return { ...course, progress };
+        });
+        setStartedCourses(courses);
+      })
+      .catch((error) => {
+        console.error("Error al obtener los cursos!", error);
+      });
+    fetchFavCourses()
+      .then((courses) => {
+        setFavCourses(courses);
+      })
+      .catch((error) => {
+        console.error("Error al obtener los cursos!", error);
+      });
+  }, []);
 
   return (
     <div>
       <main>
-        <Container sx={{ marginTop: "20px" }}>
+        <Container maxWidth="md" sx={{ marginTop: "20px" }}>
           <UserInformation />
-          <CurrentCourses courses={coursesStarted} />
-          <FinishedCourses courses={coursesFinished} />
+          <Courses
+            courses={startedCourses}
+            showProgress={true}
+            title="Cursos Empezados"
+          />
+          <Courses courses={favCourses} title="Cursos Favoritos" />
         </Container>
       </main>
-      <Box sx={{ bgcolor: "background.paper", p: 6 }} component="footer">
+      <Box
+        sx={{ bgcolor: "background.paper", marginTop: "40px" }}
+        component="footer"
+      >
         <Copyright />
       </Box>
     </div>
