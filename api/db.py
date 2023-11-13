@@ -1,6 +1,6 @@
 from datetime import datetime
 from sqlmodel import SQLModel, create_engine, Session
-from models.courses import Course
+from models.courses import Course, Category
 from models.users import User
 from models.course_rates import CourseUserRate
 from models.course_favorites import CourseUserFavorite
@@ -43,7 +43,9 @@ def seed_db():
             user_rates=[],
             category_id=1,
             user_favorites=[],
-            course_materials=[]
+            course_materials=[],
+            teacher_id=1,
+            user_subscriptions=[]
         ),
         Course(
             name='Diseño Gráfico Avanzado',
@@ -53,7 +55,9 @@ def seed_db():
             user_rates=[],
             category_id=1,
             user_favorites=[],
-            course_materials=[]
+            course_materials=[],
+            teacher_id=1,
+            user_subscriptions=[]
         ),
         Course(
             name='Machine Learning con Python',
@@ -63,7 +67,9 @@ def seed_db():
             user_rates=[],
             category_id=3,
             user_favorites=[],
-            course_materials=[]
+            course_materials=[],
+            teacher_id=1,
+            user_subscriptions=[]
         ),
         Course(
             name='Curso de Marketing Digital',
@@ -73,7 +79,9 @@ def seed_db():
             user_rates=[],
             category_id=1,
             user_favorites=[],
-            course_materials=[]
+            course_materials=[],
+            teacher_id=1,
+            user_subscriptions=[]
         ),
         Course(
             name='Programación en C++',
@@ -83,7 +91,9 @@ def seed_db():
             user_rates=[],
             category_id=2,
             user_favorites=[],
-            course_materials=[]
+            course_materials=[],
+            teacher_id=1,
+            user_subscriptions=[]
         ),
         Course(
             name='Curso de Cocina Gourmet',
@@ -93,7 +103,9 @@ def seed_db():
             user_rates=[],
             category_id=1,
             user_favorites=[],
-            course_materials=[]
+            course_materials=[],
+            teacher_id=1,
+            user_subscriptions=[]
         ),
         Course(
             name='Desarrollo de Aplicaciones Móviles',
@@ -103,7 +115,9 @@ def seed_db():
             user_rates=[],
             category_id=3,
             user_favorites=[],
-            course_materials=[]
+            course_materials=[],
+            teacher_id=1,
+            user_subscriptions=[]
         ),
         Course(
             name='Inversión en Bolsa',
@@ -113,7 +127,9 @@ def seed_db():
             user_rates=[],
             category_id=1,
             user_favorites=[],
-            course_materials=[]
+            course_materials=[],
+            teacher_id=1,
+            user_subscriptions=[]
         ),
         Course(
             name='Curso de Yoga y Meditación',
@@ -123,16 +139,19 @@ def seed_db():
             user_rates=[],
             category_id=2,
             user_favorites=[],
-            course_materials=[]
+            course_materials=[],
+            teacher_id=1,
+            user_subscriptions=[]
         )
     ]
 
     course_user_favorites = [
-        CourseUserFavorite(user_id=1, course_id=1, favorite=True),
+        CourseUserFavorite(user_id=1, course_id=1),
     ]
 
     course_user_rates = [
-        CourseUserRate(user_id=1, course_id=1, rate=5),
+        CourseUserRate(user_id=1, course_id=1, rate=5,
+                       comment='Very good course!'),
     ]
 
     default_user = User(
@@ -141,8 +160,17 @@ def seed_db():
         email="default@example.com",
         created_at=datetime.now(),
         course_rates=[],
-        course_favorites=[]
+        course_favorites=[],
+        course_subscriptions=[]
     )
+
+    categories = [
+        Category(id=1, name="Programacion"),
+        Category(id=2, name="Diseño"),
+        Category(id=3, name="Cocina"),
+        Category(id=4, name="Inversiones"),
+        Category(id=5, name="Otras"),
+    ]
 
     with Session(engine) as session:
 
@@ -159,5 +187,8 @@ def seed_db():
 
         for course_user_favorite in course_user_favorites:
             session.add(course_user_favorite)
+
+        for category in categories:
+            session.add(category)
 
         session.commit()

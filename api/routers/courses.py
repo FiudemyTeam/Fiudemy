@@ -1,13 +1,16 @@
 from fastapi import APIRouter, HTTPException, Response, Depends
-from sqlmodel import select, and_, Session
+from pydantic import BaseModel
+from sqlmodel import Session, select, and_
 from typing import List, Optional
 
+from models.users import User
 from models.courses import (
     Course, CourseCreate, CourseRead, CourseUserRate,
-    CourseUserFavorite, CourseReadWithMaterials
+    CourseUserFavorite, Category, CourseReadWithMaterials
 )
 from models.course_materials import CourseMaterial, CourseMaterialCreate
 from dependencies import UserDependency, get_session
+from models.course_subscriptions import CourseUserSubscription
 
 
 router = APIRouter(
@@ -19,13 +22,16 @@ router = APIRouter(
 
 @router.get("/", response_model=List[CourseRead])
 async def get_courses(
+    user: UserDependency,
     category: Optional[int] = None,
     searchString: Optional[str] = None,
     rate: Optional[int] = None,
     favorite: Optional[bool] = None,
     session: Session = Depends(get_session)
 ):
-    query = select(Course)
+    is_favorite_sub = select(Course.user_favorites.any(
+        User.id == user.id)).label("is_favorite")
+    query = select(Course, is_favorite_sub)
     filters = []
 
     if category:
@@ -38,27 +44,45 @@ async def get_courses(
         filters.append(Course.user_rates.any(CourseUserRate.rate == rate))
 
     if favorite:
-        filters.append(Course.user_favorites.any(
-            CourseUserFavorite.favorite == favorite))
+        filters.append(Course.user_favorites.any(User.id == user.id))
 
     query = query.where(and_(*filters))
     results = session.exec(query)
-    return results.all()
+
+    courses = []
+    for course, is_favorite in results:
+        course = CourseRead.from_orm(course)
+        course.is_favorite = is_favorite
+        courses.append(course)
+    return courses
 
 
-@router.get("/{id}", response_model=CourseReadWithMaterials)
+@router.get("/{id}", response_model=CourseRead)
 async def get_course(id: int,
+                     user: UserDependency,
                      session: Session = Depends(get_session)):
-    course = session.get(Course, id)
+    is_favorite_sub = select(Course.user_favorites.any(
+        User.id == user.id)).label("is_favorite")
+    is_subscribed_sub = select(Course.user_subscriptions.any(
+        User.id == user.id)).label("is_subscribed")
+    query = select(Course, is_favorite_sub,
+                   is_subscribed_sub).where(Course.id == id)
+    (course, is_favorite, is_subscribed) = session.exec(query).first()
     if not course:
         raise HTTPException(status_code=404, detail="Course not found")
+
+    course = CourseRead.from_orm(course)
+    course.is_favorite = is_favorite
+    course.is_subscribed = is_subscribed
     return course
 
 
 @router.post("/", response_model=CourseRead)
 def post_course(course: CourseCreate,
+                user: UserDependency,
                 session: Session = Depends(get_session)):
     session.add(new_course := Course.from_orm(course))
+    new_course.teacher_id = user.id
     session.commit()
     session.refresh(new_course)
     return new_course
@@ -67,6 +91,7 @@ def post_course(course: CourseCreate,
 @router.post("/{id}/rate", response_model=CourseUserRate, status_code=200)
 def upsert_course_rate(id: int,
                        rate: int,
+                       comment: str,
                        user: UserDependency,
                        response: Response,
                        session: Session = Depends(get_session)):
@@ -80,16 +105,17 @@ def upsert_course_rate(id: int,
     if course_rate is None:
         course_rate = CourseUserRate(user_id=user.id,
                                      course_id=id,
-                                     rate=rate)
+                                     rate=rate,
+                                     comment=comment)
         response.status_code = 201
     # Else, update the existing one
     else:
         course_rate.rate = rate
+        course_rate.comment = comment
 
     session.add(course_rate)
     session.commit()
     session.refresh(course_rate)
-
     return course_rate
 
 
@@ -108,3 +134,64 @@ def add_course_material(id: int,
     session.refresh(course)
 
     return course
+
+
+@router.post("/{id}/favorite", response_model=dict)
+def favorite_course(id: int,
+                    user: UserDependency,
+                    session: Session = Depends(get_session)):
+    existing_fav = session.query(CourseUserFavorite).filter_by(user_id=user.id,
+                                                               course_id=id).first()
+    if not existing_fav:
+        course_user_fav = CourseUserFavorite(
+            user_id=user.id,
+            course_id=id
+        )
+        session.add(course_user_fav)
+        session.commit()
+    return {"is_favorite": True}
+
+
+@router.delete("/{id}/favorite", response_model=dict)
+def unfavorite_course(id: int,
+                      user: UserDependency,
+                      session: Session = Depends(get_session)):
+    existing_fav = session.query(CourseUserFavorite).filter_by(user_id=user.id,
+                                                               course_id=id).first()
+    if existing_fav:
+        session.delete(existing_fav)
+        session.commit()
+    return {"is_favorite": False}
+
+
+@router.get("/categories/", response_model=List[Category])
+async def get_categories(session: Session = Depends(get_session)):
+    categories = session.exec(select(Category)).all()
+    return categories
+
+
+@router.post("/{id}/subscribe", response_model=CourseUserFavorite)
+def subscribe_course(id: int,
+                     user: UserDependency,
+                     session: Session = Depends(get_session)):
+    existing_sub = session.query(CourseUserSubscription).filter_by(user_id=user.id,
+                                                                   course_id=id).first()
+    if not existing_sub:
+        course_user_sub = CourseUserSubscription(
+            user_id=user.id,
+            course_id=id
+        )
+        session.add(course_user_sub)
+        session.commit()
+    return {"is_subscribed": True}
+
+
+@router.get("/subscribed/", response_model=List[CourseRead])
+def get_subscribed_courses(user: UserDependency, session: Session = Depends(get_session)):
+    is_subscribed_sub = select(Course.user_subscriptions.any(
+        User.id == user.id)).label("is_subscribed")
+    query = select(Course, is_subscribed_sub).join(
+        Course.user_subscriptions).where(User.id == user.id)
+    courses = session.exec(query).scalars().all()
+
+    return [CourseRead.from_orm(course) for course in courses]
