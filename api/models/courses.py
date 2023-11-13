@@ -3,6 +3,7 @@ from sqlmodel import Field, SQLModel, Relationship
 
 from .course_rates import CourseUserRate
 from .course_favorites import CourseUserFavorite
+from .course_materials import CourseMaterial
 from .course_subscriptions import CourseUserSubscription
 
 from .users import User
@@ -23,6 +24,7 @@ class Course(CourseBase, table=True):
                                             link_model=CourseUserRate)
     user_favorites: List["User"] = Relationship(back_populates="course_favorites",
                                                 link_model=CourseUserFavorite)
+    course_materials: List["CourseMaterial"] = Relationship(back_populates="course")
     user_subscriptions: List["User"] = Relationship(back_populates="course_subscriptions",
                                                     link_model=CourseUserSubscription)
     category_id: Optional[int] = Field(default=None)
@@ -39,9 +41,12 @@ class CourseRead(CourseBase):
     teacher_id: Optional[int]
     is_subscribed: Optional[bool]
 
+
+class CourseReadWithMaterials(CourseRead):
+    course_materials: List[CourseMaterial] = []
+
+
 # Course Category
-
-
 class Category(SQLModel, table=True):
     id: str = Field(default=None, index=True, primary_key=True)
     name: str
