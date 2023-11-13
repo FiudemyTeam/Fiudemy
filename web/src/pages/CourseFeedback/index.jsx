@@ -1,32 +1,20 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Rating from '@mui/material/Rating';
 import Button from '@mui/material/Button';
 import { Container } from '@mui/material';
+import axios from "axios";
 
-const initialReviews = [
-  {
-    id: 1,
-    rating: 4,
-    comment: "Un curso muy completo y bien explicado.",
-  },
-  {
-    id: 2,
-    rating: 5,
-    comment: "Excelente curso. Lo recomiendo a todos.",
-  },
-  {
-    id: 3,
-    rating: 3,
-    comment: "Buen curso, pero podría mejorar en algunos aspectos.",
-  },
-];
+const API_HOST = import.meta.env.VITE_API_HOST;
 
 const ReviewView = () => {
+
+  
+
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
-  const [reviews, setReviews] = useState(initialReviews);
+  const [reviews, setReviews] = useState([]);
 
   const handleRatingChange = (event, newValue) => {
     setRating(newValue);
@@ -36,18 +24,37 @@ const ReviewView = () => {
     setComment(event.target.value);
   };
 
-  const handleSubmitReview = () => {
+  const handleSubmitReview = async () => {
     if (rating > 0 && comment.trim() !== '') {
       const newReview = {
-        id: reviews.length + 1, // Simulación de nuevo ID
-        rating,
-        comment,
+        rate: rating,
+        comment: comment,
       };
-      setReviews([...reviews, newReview]);
-      setRating(0);
-      setComment('');
+
+      try {
+        const response = await axios.post(`${API_HOST}/courses/2/rate`, 
+        newReview, 
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
+        if (response.status === 201) {
+          // La reseña fue creada con éxito en el backend
+          const createdReview = response.data;
+          setReviews([...reviews, createdReview]);
+          setRating(0);
+          setComment('');
+        } else {
+          // Manejar otros casos, si es necesario
+          console.error('Error al crear la reseña en el backend');
+        }
+      } catch (error) {
+        console.error('Error de red', error);
+      }
     }
-  };
+  }
 
   return (
     <div>
@@ -74,7 +81,7 @@ const ReviewView = () => {
 
 {reviews.map((review) => (
         <div key={review.id} style={{ border: "1px solid #ccc", borderRadius: "10px", padding: "10px", margin: "10px" }}>
-          <Typography variant="h6">Puntuación: {review.rating}</Typography>
+          <Typography variant="h6">Puntuación: {review.rate}</Typography>
           <Typography variant="body1">{review.comment}</Typography>
         </div>
 ))}
