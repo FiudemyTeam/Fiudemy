@@ -209,19 +209,6 @@ export default function CourseView({ data }) {
           ))}
         </Container>
       </main>
-      <Box sx={{ bgcolor: "background.paper", p: 6 }} component="footer">
-        <Typography variant="h6" align="center" gutterBottom>
-          Fiudemy
-        </Typography>
-        <Typography
-          variant="subtitle1"
-          align="center"
-          color="text.secondary"
-          component="p"
-        >
-          Continua aprendiendo con nosotros!
-        </Typography>
-      </Box>
     </>
   );
 }
