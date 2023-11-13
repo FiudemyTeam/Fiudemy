@@ -118,6 +118,13 @@ def upsert_course_rate(id: int,
     session.refresh(course_rate)
     return course_rate
 
+@router.get("/{id}/rate", response_model=List[CourseUserRate], status_code=200)
+def get_course_rates(id: int,
+                       response: Response,
+                       session: Session = Depends(get_session)):
+
+    return session.query(CourseUserRate).filter(CourseUserRate.course_id == id).all()
+
 
 @router.post("/{id}/material", response_model=CourseReadWithMaterials, status_code=200)
 def add_course_material(id: int,

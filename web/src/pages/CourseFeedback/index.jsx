@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Rating from '@mui/material/Rating';
@@ -9,8 +10,29 @@ import axios from "axios";
 const API_HOST = import.meta.env.VITE_API_HOST;
 
 const ReviewView = () => {
+  const { id } = useParams();
 
-  
+  const fetchReviews = async () => {
+    try {
+      const response = await axios.get(`${API_HOST}/courses/${id}/rate`, 
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      if (response.status === 200) {
+        setReviews(response.data);
+      } else {
+        console.error('Error al obtener reseñas del backend');
+      }
+    } catch (error) {
+      console.error('Error de red', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchReviews();
+  }, []);
 
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
@@ -32,7 +54,7 @@ const ReviewView = () => {
       };
 
       try {
-        const response = await axios.post(`${API_HOST}/courses/2/rate`, 
+        const response = await axios.post(`${API_HOST}/courses/${id}/rate`, 
         newReview, 
         {
           headers: {
@@ -40,10 +62,9 @@ const ReviewView = () => {
           },
         });
 
-        if (response.status === 201) {
+        if (response.status === 200 || response.status === 201) {
           // La reseña fue creada con éxito en el backend
-          const createdReview = response.data;
-          setReviews([...reviews, createdReview]);
+          await fetchReviews();
           setRating(0);
           setComment('');
         } else {
@@ -80,7 +101,7 @@ const ReviewView = () => {
 <div>
 
 {reviews.map((review) => (
-        <div key={review.id} style={{ border: "1px solid #ccc", borderRadius: "10px", padding: "10px", margin: "10px" }}>
+        <div key={review.course_id + "-" + review.user_id} style={{ border: "1px solid #ccc", borderRadius: "10px", padding: "10px", margin: "10px" }}>
           <Typography variant="h6">Puntuación: {review.rate}</Typography>
           <Typography variant="body1">{review.comment}</Typography>
         </div>
