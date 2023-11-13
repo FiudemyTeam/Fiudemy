@@ -90,11 +90,11 @@ def post_course(course: CourseCreate,
 
 @router.post("/{id}/rate", response_model=CourseUserRate, status_code=200)
 def upsert_course_rate(id: int,
-                       rate: int,
-                       comment: str,
                        user: UserDependency,
+                       course_user_rate: CourseUserRate,
                        response: Response,
                        session: Session = Depends(get_session)):
+                       
     # Check if rate already exists
     statement = select(CourseUserRate).where(
         CourseUserRate.user_id == user.id,
@@ -105,18 +105,25 @@ def upsert_course_rate(id: int,
     if course_rate is None:
         course_rate = CourseUserRate(user_id=user.id,
                                      course_id=id,
-                                     rate=rate,
-                                     comment=comment)
+                                     rate=course_user_rate.rate,
+                                     comment=course_user_rate.comment)
         response.status_code = 201
     # Else, update the existing one
     else:
-        course_rate.rate = rate
-        course_rate.comment = comment
+        course_rate.rate = course_user_rate.rate
+        course_rate.comment = course_user_rate.comment
 
     session.add(course_rate)
     session.commit()
     session.refresh(course_rate)
     return course_rate
+
+@router.get("/{id}/rate", response_model=List[CourseUserRate], status_code=200)
+def get_course_rates(id: int,
+                       response: Response,
+                       session: Session = Depends(get_session)):
+
+    return session.query(CourseUserRate).filter(CourseUserRate.course_id == id).all()
 
 
 @router.post("/{id}/material", response_model=CourseReadWithMaterials, status_code=200)
