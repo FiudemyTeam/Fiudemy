@@ -40,6 +40,7 @@ class CourseRead(CourseBase):
     is_favorite: Optional[bool]
     teacher_id: Optional[int]
     is_subscribed: Optional[bool]
+    total_subscriptions: Optional[int]
 
 
 class CourseReadWithMaterials(CourseRead):

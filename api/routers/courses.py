@@ -11,7 +11,6 @@ from models.courses import (
 from models.course_materials import CourseMaterial, CourseMaterialCreate
 from dependencies import UserDependency, get_session
 from models.course_subscriptions import CourseUserSubscription
-from models.course_subscriptions import CourseTotalSubscriptions
 
 router = APIRouter(
     prefix="/courses",
@@ -53,6 +52,8 @@ async def get_courses(
     for course, is_favorite in results:
         course = CourseRead.from_orm(course)
         course.is_favorite = is_favorite
+        course.total_subscriptions = len(session.query(CourseUserSubscription).filter_by(course_id=course.id).all())
+
         courses.append(course)
     return courses
 
@@ -65,6 +66,8 @@ async def get_course(id: int,
         User.id == user.id)).label("is_favorite")
     is_subscribed_sub = select(Course.user_subscriptions.any(
         User.id == user.id)).label("is_subscribed")
+    course_total_subscriptions = len(session.query(CourseUserSubscription).filter_by(course_id=id).all())
+
     query = select(Course, is_favorite_sub,
                    is_subscribed_sub).where(Course.id == id)
     (course, is_favorite, is_subscribed) = session.exec(query).first()
@@ -74,6 +77,8 @@ async def get_course(id: int,
     course = CourseRead.from_orm(course)
     course.is_favorite = is_favorite
     course.is_subscribed = is_subscribed
+    course.total_subscriptions = course_total_subscriptions
+
     return course
 
 
@@ -94,7 +99,6 @@ def upsert_course_rate(id: int,
                        course_user_rate: CourseUserRate,
                        response: Response,
                        session: Session = Depends(get_session)):
-                       
     # Check if rate already exists
     statement = select(CourseUserRate).where(
         CourseUserRate.user_id == user.id,
@@ -118,11 +122,11 @@ def upsert_course_rate(id: int,
     session.refresh(course_rate)
     return course_rate
 
+
 @router.get("/{id}/rate", response_model=List[CourseUserRate], status_code=200)
 def get_course_rates(id: int,
-                       response: Response,
-                       session: Session = Depends(get_session)):
-
+                     response: Response,
+                     session: Session = Depends(get_session)):
     return session.query(CourseUserRate).filter(CourseUserRate.course_id == id).all()
 
 
@@ -201,13 +205,6 @@ def subscribe_course(id: int,
         session.add(course_user_sub)
         session.commit()
     return {"is_subscribed": True}
-
-
-@router.get("/{id}/subscriptions", response_model=CourseTotalSubscriptions)
-def course_subscriptions(id: int,
-                     session: Session = Depends(get_session)):
-    return CourseTotalSubscriptions(
-        total_subscriptions=len(session.query(CourseUserSubscription).filter_by(course_id=id).all()))
 
 
 @router.get("/subscribed/", response_model=List[CourseRead])

@@ -10,6 +10,3 @@ class CourseUserSubscription(SQLModel, table=True):
         default=None, foreign_key="course.id", primary_key=True
     )
 
-
-class CourseTotalSubscriptions(SQLModel):
-    total_subscriptions: int
