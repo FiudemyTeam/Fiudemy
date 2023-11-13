@@ -11,6 +11,7 @@ from models.courses import (
 from models.course_materials import CourseMaterial, CourseMaterialCreate
 from dependencies import UserDependency, get_session
 from models.course_subscriptions import CourseUserSubscription
+from models.course_subscriptions import CourseTotalSubscriptions
 
 router = APIRouter(
     prefix="/courses",
@@ -200,6 +201,13 @@ def subscribe_course(id: int,
         session.add(course_user_sub)
         session.commit()
     return {"is_subscribed": True}
+
+
+@router.get("/{id}/subscriptions", response_model=CourseTotalSubscriptions)
+def course_subscriptions(id: int,
+                     session: Session = Depends(get_session)):
+    return CourseTotalSubscriptions(
+        total_subscriptions=len(session.query(CourseUserSubscription).filter_by(course_id=id).all()))
 
 
 @router.get("/subscribed/", response_model=List[CourseRead])

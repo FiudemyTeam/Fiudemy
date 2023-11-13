@@ -9,3 +9,7 @@ class CourseUserSubscription(SQLModel, table=True):
     course_id: Optional[int] = Field(
         default=None, foreign_key="course.id", primary_key=True
     )
+
+
+class CourseTotalSubscriptions(SQLModel):
+    total_subscriptions: int
