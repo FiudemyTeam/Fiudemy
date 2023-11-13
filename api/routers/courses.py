@@ -12,7 +12,6 @@ from models.course_materials import CourseMaterial, CourseMaterialCreate
 from dependencies import UserDependency, get_session
 from models.course_subscriptions import CourseUserSubscription
 
-
 router = APIRouter(
     prefix="/courses",
     tags=["courses"],
@@ -22,12 +21,12 @@ router = APIRouter(
 
 @router.get("/", response_model=List[CourseRead])
 async def get_courses(
-    user: UserDependency,
-    category: Optional[int] = None,
-    searchString: Optional[str] = None,
-    rate: Optional[int] = None,
-    favorite: Optional[bool] = None,
-    session: Session = Depends(get_session)
+        user: UserDependency,
+        category: Optional[int] = None,
+        searchString: Optional[str] = None,
+        rate: Optional[int] = None,
+        favorite: Optional[bool] = None,
+        session: Session = Depends(get_session)
 ):
     is_favorite_sub = select(Course.user_favorites.any(
         User.id == user.id)).label("is_favorite")
@@ -117,6 +116,16 @@ def upsert_course_rate(id: int,
     session.commit()
     session.refresh(course_rate)
     return course_rate
+
+
+@router.get("/{id}/rates", response_model=List[CourseUserRate], status_code=200)
+def get_course_rates(id: int,
+                     session: Session = Depends(get_session)):
+    course_user_rates_statement = select(CourseUserRate).where(
+        CourseUserRate.course_id == id)
+    course_rates = session.exec(course_user_rates_statement).all()
+
+    return course_rates
 
 
 @router.post("/{id}/material", response_model=CourseReadWithMaterials, status_code=200)
