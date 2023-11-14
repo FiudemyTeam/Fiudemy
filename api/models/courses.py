@@ -41,6 +41,7 @@ class CourseRead(CourseBase):
     teacher_id: Optional[int]
     is_subscribed: Optional[bool]
     total_subscriptions: Optional[int]
+    course_materials: List["CourseMaterial"]
 
 
 class CourseReadWithMaterials(CourseRead):

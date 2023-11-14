@@ -8,8 +8,10 @@ if TYPE_CHECKING:
 class CourseMaterialBase(SQLModel):
     title: Optional[str] = None
     description: Optional[str] = None
+    order: Optional[int] = None
     type: Optional[str] = None
     value: Optional[str] = None
+    viewed: Optional[bool] = False
 
 
 class CourseMaterial(CourseMaterialBase, table=True):

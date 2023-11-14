@@ -1,16 +1,16 @@
-from fastapi import APIRouter, HTTPException, Response, Depends
-from pydantic import BaseModel
-from sqlmodel import Session, select, and_
 from typing import List, Optional
 
-from models.users import User
+from dependencies import UserDependency, get_session
+from fastapi import APIRouter, HTTPException, Response, Depends
+from models.course_material_views import CourseMaterialView
+from models.course_materials import CourseMaterial, CourseMaterialCreate
+from models.course_subscriptions import CourseUserSubscription
 from models.courses import (
     Course, CourseCreate, CourseRead, CourseUserRate,
     CourseUserFavorite, Category, CourseReadWithMaterials
 )
-from models.course_materials import CourseMaterial, CourseMaterialCreate
-from dependencies import UserDependency, get_session
-from models.course_subscriptions import CourseUserSubscription
+from models.users import User
+from sqlmodel import Session, select, and_
 
 router = APIRouter(
     prefix="/courses",
@@ -53,8 +53,10 @@ async def get_courses(
         course = CourseRead.from_orm(course)
         course.is_favorite = is_favorite
         course.total_subscriptions = len(session.query(CourseUserSubscription).filter_by(course_id=course.id).all())
+        course.course_materials.sort(key=lambda x: x.order, reverse=False)
 
         courses.append(course)
+
     return courses
 
 
@@ -67,6 +69,7 @@ async def get_course(id: int,
     is_subscribed_sub = select(Course.user_subscriptions.any(
         User.id == user.id)).label("is_subscribed")
     course_total_subscriptions = len(session.query(CourseUserSubscription).filter_by(course_id=id).all())
+    viewed_course_materials = session.query(CourseMaterialView).filter_by(course_id=id).all()
 
     query = select(Course, is_favorite_sub,
                    is_subscribed_sub).where(Course.id == id)
@@ -78,6 +81,13 @@ async def get_course(id: int,
     course.is_favorite = is_favorite
     course.is_subscribed = is_subscribed
     course.total_subscriptions = course_total_subscriptions
+    course.course_materials.sort(key=lambda x: x.order, reverse=False)
+
+    for course_material in course.course_materials:
+        # TODO: fix & improve this
+        for viewed_course_material in viewed_course_materials:
+            if viewed_course_material.material_id == course_material.id:
+                course_material.viewed = True
 
     return course
 
@@ -155,6 +165,25 @@ def add_course_material(id: int,
     session.refresh(course)
 
     return course
+
+
+@router.post("/{id}/material/{material_id}/watched", response_model=CourseMaterialView, status_code=200)
+def watch_course_material(id: int,
+                          material_id: int,
+                          session: Session = Depends(get_session)):
+    course = session.get(Course, id)
+    if not course:
+        raise HTTPException(status_code=404, detail="Course not found")
+
+    material = session.get(CourseMaterial, material_id)
+    if not material:
+        raise HTTPException(status_code=404, detail="Course material not found")
+
+    course_material_view = CourseMaterialView(course_id=id, material_id=material_id, viewed=True)
+    session.add(course_material_view)
+    session.commit()
+
+    return course_material_view
 
 
 @router.post("/{id}/favorite", response_model=dict)
