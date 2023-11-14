@@ -5,10 +5,9 @@ from sqlmodel import SQLModel, Field
 
 class CourseMaterialView(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    course_id: Optional[int] = Field(
-        default=None, foreign_key="course.id", primary_key=False
+    material_id: int = Field(
+        default=None, foreign_key="coursematerial.id"
     )
-    material_id: Optional[int] = Field(
-        default=None, foreign_key="coursematerial.id", primary_key=False
+    user_id: int = Field(
+        default=None, foreign_key="user.id"
     )
-    viewed: Optional[bool] = Field(default=False)
