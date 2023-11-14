@@ -11,7 +11,6 @@ class CourseMaterialBase(SQLModel):
     order: Optional[int] = None
     type: Optional[str] = None
     value: Optional[str] = None
-    viewed: Optional[bool] = False
 
 
 class CourseMaterial(CourseMaterialBase, table=True):
@@ -25,3 +24,7 @@ class CourseMaterial(CourseMaterialBase, table=True):
 
 class CourseMaterialCreate(CourseMaterialBase):
     pass
+
+
+class CourseMaterialRead(CourseMaterial):
+    viewed: Optional[bool] = None
