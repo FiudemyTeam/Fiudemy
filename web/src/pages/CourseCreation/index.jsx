@@ -21,7 +21,7 @@ export default function CreateCourseView() {
   const [courseData, setCourseData] = useState({
     title: '',
     description: '',
-    modules: [{ moduleTitle: '', moduleContent: '' }],
+    modules: [{ moduleTitle: '', moduleContent: '', moduleVideo: '' }],
   });
 
   const handleChange = (event, index) => {
@@ -38,7 +38,7 @@ export default function CreateCourseView() {
   const addModule = () => {
     setCourseData({
       ...courseData,
-      modules: [...courseData.modules, { moduleTitle: '', moduleContent: '' }],
+      modules: [...courseData.modules, { moduleTitle: '', moduleContent: '', moduleVideo: '' }],
     });
   };
 
@@ -98,6 +98,15 @@ export default function CreateCourseView() {
                 value={module.moduleContent}
                 onChange={(e) => handleChange(e, index)}
                 style={{ marginBottom: "20px" }}
+              />
+              <TextField
+              name="moduleVideo"
+              label={`Link del video ${index + 1}`}
+              variant="outlined"
+              fullWidth
+              value={module.moduleContent}
+              onChange={(e) => handleChange(e, index)}
+              style={{ marginBottom: "20px" }}
               />
               <IconButton onClick={() => deleteModule(index)} color="error">
                 <DeleteIcon />
