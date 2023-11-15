@@ -1,5 +1,7 @@
+from datetime import datetime
 from typing import List, Optional
 
+import segno
 from dependencies import UserDependency, get_session
 from fastapi import APIRouter, HTTPException, Response, Depends
 from models.course_material_views import CourseMaterialView
@@ -12,6 +14,8 @@ from models.courses import (
 from models.users import User
 from sqlmodel import Session, select, and_
 from sqlalchemy import func
+
+from models.course_certificate import CourseCertificate
 
 router = APIRouter(
     prefix="/courses",
@@ -298,3 +302,32 @@ def get_subscribed_courses(user: UserDependency, session: Session = Depends(get_
     courses = session.exec(query).scalars().all()
 
     return [CourseRead.from_orm(course) for course in courses]
+
+
+@router.get("/{id}/certificate", response_model=CourseCertificate)
+async def get_course_certificate(id: int,
+                                 session: Session = Depends(get_session)):
+    query = select(Course).where(Course.id == id)
+    course = session.exec(query).first()
+    if not course:
+        raise HTTPException(status_code=404, detail="Course not found")
+
+    viewed_material_ids = session.exec(
+        select(CourseMaterialView.material_id)
+        .where(CourseMaterialView.material_id.in_(
+            [material.id for material in course.course_materials]
+        ))
+    ).all()
+
+    if len(viewed_material_ids) != len(course.course_materials):
+        raise HTTPException(status_code=400, detail="Course not completed")
+
+    course_certificate = CourseCertificate(course_id=course.id, course_name=course.name,
+                                           issued_date=str(datetime.now()))
+
+    qrcode = segno.make_qr(str(course_certificate))
+    tmp_certificate_file = "certificate_qrcode.png"
+    qrcode.save(tmp_certificate_file, scale=200)
+    data = open(tmp_certificate_file, "rb").read()
+
+    return Response(content=data, media_type="image/png")
