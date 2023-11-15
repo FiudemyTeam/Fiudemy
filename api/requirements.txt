@@ -18,3 +18,4 @@ pyJWT
 bcrypt
 passlib
 pydantic[email]
+segno

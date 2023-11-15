@@ -3,7 +3,7 @@ from sqlmodel import Field, SQLModel, Relationship
 
 from .course_rates import CourseUserRate
 from .course_favorites import CourseUserFavorite
-from .course_materials import CourseMaterial
+from .course_materials import CourseMaterial, CourseMaterialRead
 from .course_subscriptions import CourseUserSubscription
 
 from .users import User
@@ -44,7 +44,7 @@ class CourseRead(CourseBase):
 
 
 class CourseReadWithMaterials(CourseRead):
-    course_materials: List[CourseMaterial] = []
+    course_materials: List[CourseMaterialRead] = []
 
 
 # Course Category
