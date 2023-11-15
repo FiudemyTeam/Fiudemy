@@ -1,5 +1,7 @@
 from datetime import datetime
 from sqlmodel import SQLModel, create_engine, Session
+
+from models.course_material_views import CourseMaterialView
 from models.courses import Course, Category
 from models.users import User
 from models.course_rates import CourseUserRate
@@ -28,8 +30,18 @@ def seed_db():
             id=1,
             title='Introducción a HTML',
             description='Aprende los fundamentos de HTML y crea tu primera página web.',
+            order=1,
             type='video',
             value='https://www.youtube.com/watch?v=3JluqTojuME',
+            course_id=1
+        ),
+        CourseMaterial(
+            id=2,
+            title='Introducción a JavaScript',
+            description='Aprende los fundamentos de JavaScript y crea la lógica de tu página web.',
+            order=2,
+            type='video',
+            value='https://www.youtube.com/watch?v=ivdTnPl1ND0&themeRefresh=1',
             course_id=1
         )
     ]
@@ -152,6 +164,12 @@ def seed_db():
     course_user_rates = [
         CourseUserRate(user_id=1, course_id=1, rate=5,
                        comment='Very good course!'),
+        CourseUserRate(user_id=1, course_id=2, rate=3,
+                       comment='Good content, but not very good teacher'),
+    ]
+
+    course_material_views = [
+        CourseMaterialView(material_id=1, user_id=1),
     ]
 
     default_user = User(
@@ -190,5 +208,8 @@ def seed_db():
 
         for category in categories:
             session.add(category)
+
+        for course_material_view in course_material_views:
+            session.add(course_material_view)
 
         session.commit()

@@ -1,16 +1,17 @@
-from fastapi import APIRouter, HTTPException, Response, Depends
-from pydantic import BaseModel
-from sqlmodel import Session, select, and_
 from typing import List, Optional
 
-from models.users import User
+from dependencies import UserDependency, get_session
+from fastapi import APIRouter, HTTPException, Response, Depends
+from models.course_material_views import CourseMaterialView
+from models.course_materials import CourseMaterial, CourseMaterialCreate
+from models.course_subscriptions import CourseUserSubscription
 from models.courses import (
     Course, CourseCreate, CourseRead, CourseUserRate,
     CourseUserFavorite, Category, CourseReadWithMaterials
 )
-from models.course_materials import CourseMaterial, CourseMaterialCreate
-from dependencies import UserDependency, get_session
-from models.course_subscriptions import CourseUserSubscription
+from models.users import User
+from sqlmodel import Session, select, and_
+from sqlalchemy import func
 
 router = APIRouter(
     prefix="/courses",
@@ -30,7 +31,9 @@ async def get_courses(
 ):
     is_favorite_sub = select(Course.user_favorites.any(
         User.id == user.id)).label("is_favorite")
-    query = select(Course, is_favorite_sub)
+    is_subscribed_sub = select(Course.user_subscriptions.any(
+        User.id == user.id)).label("is_subscribed")
+    query = select(Course, is_favorite_sub, is_subscribed_sub)
     filters = []
 
     if category:
@@ -49,16 +52,20 @@ async def get_courses(
     results = session.exec(query)
 
     courses = []
-    for course, is_favorite in results:
+    for course, is_favorite, is_subscribed in results:
         course = CourseRead.from_orm(course)
         course.is_favorite = is_favorite
-        course.total_subscriptions = len(session.query(CourseUserSubscription).filter_by(course_id=course.id).all())
-
+        course.is_subscribed = is_subscribed
+        course.total_subscriptions = session.exec(
+            select([func.count(CourseUserSubscription.user_id)])
+            .where(CourseUserSubscription.course_id == course.id)
+        ).one()
         courses.append(course)
+
     return courses
 
 
-@router.get("/{id}", response_model=CourseRead)
+@router.get("/{id}", response_model=CourseReadWithMaterials)
 async def get_course(id: int,
                      user: UserDependency,
                      session: Session = Depends(get_session)):
@@ -66,18 +73,35 @@ async def get_course(id: int,
         User.id == user.id)).label("is_favorite")
     is_subscribed_sub = select(Course.user_subscriptions.any(
         User.id == user.id)).label("is_subscribed")
-    course_total_subscriptions = len(session.query(CourseUserSubscription).filter_by(course_id=id).all())
+    course_total_subscriptions = session.exec(
+        select([func.count(CourseUserSubscription.user_id)])
+        .where(CourseUserSubscription.course_id == id)
+    ).one()
 
-    query = select(Course, is_favorite_sub,
-                   is_subscribed_sub).where(Course.id == id)
+    query = select(Course,
+                   is_favorite_sub,
+                   is_subscribed_sub
+                   ).where(Course.id == id)
     (course, is_favorite, is_subscribed) = session.exec(query).first()
     if not course:
         raise HTTPException(status_code=404, detail="Course not found")
-
-    course = CourseRead.from_orm(course)
+    course = CourseReadWithMaterials.from_orm(course)
     course.is_favorite = is_favorite
     course.is_subscribed = is_subscribed
     course.total_subscriptions = course_total_subscriptions
+    course.course_materials.sort(key=lambda x: x.order, reverse=False)
+
+    viewed_material_ids = session.exec(
+        select(CourseMaterialView.material_id)
+        .where(CourseMaterialView.material_id.in_(
+            [material.id for material in course.course_materials]
+        ))
+    ).all()
+    for course_material in course.course_materials:
+        if course_material.id in viewed_material_ids:
+            course_material.viewed = True
+        else:
+            course_material.viewed = False
 
     return course
 
@@ -124,9 +148,9 @@ def upsert_course_rate(id: int,
 
 
 @router.get("/{id}/rate", response_model=List[CourseUserRate], status_code=200)
-def get_course_rates(id: int,
-                     response: Response,
-                     session: Session = Depends(get_session)):
+def get_course_rate(id: int,
+                    response: Response,
+                    session: Session = Depends(get_session)):
     return session.query(CourseUserRate).filter(CourseUserRate.course_id == id).all()
 
 
@@ -155,6 +179,52 @@ def add_course_material(id: int,
     session.refresh(course)
 
     return course
+
+
+@router.post("/{id}/material/{material_id}/view", response_model=CourseMaterialView, status_code=201)
+def watch_course_material(id: int,
+                          material_id: int,
+                          user: UserDependency,
+                          session: Session = Depends(get_session)):
+    course = session.get(Course, id)
+    if not course:
+        raise HTTPException(status_code=404,
+                            detail="Course not found")
+
+    material = session.get(CourseMaterial, material_id)
+    if not material:
+        raise HTTPException(status_code=404,
+                            detail="Course material not found")
+
+    course_material_view = CourseMaterialView(material_id=material_id,
+                                              user_id=user.id)
+    session.add(course_material_view)
+    session.commit()
+
+    return course_material_view
+
+
+@router.delete("/{id}/material/{material_id}/view", status_code=200)
+def unwatch_course_material(id: int,
+                            material_id: int,
+                            user: UserDependency,
+                            session: Session = Depends(get_session)):
+    course = session.get(Course, id)
+    if not course:
+        raise HTTPException(status_code=404,
+                            detail="Course not found")
+
+    material = session.get(CourseMaterial, material_id)
+    if not material:
+        raise HTTPException(status_code=404,
+                            detail="Course material not found")
+
+    course_material_view = session.query(CourseMaterialView).filter_by(material_id=material_id,
+                                                                       user_id=user.id).first()
+    if course_material_view:
+        session.delete(course_material_view)
+        session.commit()
+    return Response(status_code=200)
 
 
 @router.post("/{id}/favorite", response_model=dict)

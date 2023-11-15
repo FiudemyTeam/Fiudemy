@@ -8,6 +8,7 @@ if TYPE_CHECKING:
 class CourseMaterialBase(SQLModel):
     title: Optional[str] = None
     description: Optional[str] = None
+    order: Optional[int] = None
     type: Optional[str] = None
     value: Optional[str] = None
 
@@ -23,3 +24,7 @@ class CourseMaterial(CourseMaterialBase, table=True):
 
 class CourseMaterialCreate(CourseMaterialBase):
     pass
+
+
+class CourseMaterialRead(CourseMaterial):
+    viewed: Optional[bool] = None
