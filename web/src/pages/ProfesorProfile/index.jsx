@@ -1,89 +1,78 @@
-import { Link } from "react-router-dom";
-import {
-  Box,
-  Button,
-  Container,
-  Typography,
-  Card,
-  CardContent,
-  CardMedia,
-  CardActions,
-  Grid,
-} from "@mui/material";
+// Importa las dependencias necesarias
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom"; // Importa Link desde react-router-dom
+import Container from "@mui/material/Container";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Copyright from "@components/Copyright";
+import UserInformation from "../UserProfile/components/UserInformation";
+import Courses from "../UserProfile/components/Courses";
+import { getSubscribedCourses, fetchFavCourses } from "../UserProfile/api";
+import CourseCreation from "../CourseCreation";
 
-const ProfesorProfile = () => {
-  // Ejemplo de datos del profesor
-  const profesorData = {
-    name: "Nombre del Profesor",
-    courses: [
-      {
-        id: 1,
-        name: "Curso 1",
-        description: "Descripción del Curso 1",
-        image: "URL de la imagen del Curso 1",
-        students: 25,
-      },
-      // Otros cursos del profesor
-    ],
-  };
+// Define el componente UserProfile
+const UserProfile = () => {
+  // Estado para almacenar cursos iniciados y favoritos
+  const [startedCourses, setStartedCourses] = useState([]);
+  const [favCourses, setFavCourses] = useState([]);
 
+  // Efecto para cargar datos cuando el componente se monta
+  useEffect(() => {
+    // Obtiene cursos iniciados
+    getSubscribedCourses()
+      .then((courses) => {
+        // Modifica los cursos para agregar progreso (50% en este caso)
+        courses = courses.map((course) => {
+          const progress = 50;
+          return { ...course, progress };
+        });
+        setStartedCourses(courses);
+      })
+      .catch((error) => {
+        console.error("Error al obtener los cursos:", error);
+      });
+
+    // Obtiene cursos favoritos
+    fetchFavCourses()
+      .then((courses) => {
+        setFavCourses(courses);
+      })
+      .catch((error) => {
+        console.error("Error al obtener los cursos favoritos:", error);
+      });
+  }, []); // El segundo argumento [] indica que este efecto se ejecuta solo una vez al montar el componente
+
+  // Renderiza el componente
   return (
-    <Container>
-      <Box my={4}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Perfil del Profesor: {profesorData.name}
-        </Typography>
+    <div>
+      <main>
+        <Container maxWidth="md" sx={{ marginTop: "20px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <UserInformation />
+          <br></br><br></br>
+          <Link to="/course-creation" style={{ textDecoration: "none" }}>
+            <Button variant="contained" color="primary" style={{ marginBottom: "20px" }}>
+              Crear Nuevo Curso
+            </Button>
+          </Link>
+        </Container>
+        <Container maxWidth="md" sx={{ marginTop: "20px"}}>
+          <Courses courses={startedCourses} showProgress={true} title="Cursos Empezados" />
 
-        {/* Botón para crear nuevos cursos */}
-        <Link to="/crear-curso" style={{ textDecoration: "none" }}>
-          <Button variant="contained" color="primary" style={{ marginBottom: "20px" }}>
-            Crear Nuevo Curso
-          </Button>
-        </Link>
+          {/* Muestra los cursos favoritos */}
+          <Courses courses={favCourses} title="Cursos Creados" />
+        </Container>
+      </main>
 
-        {/* Lista de cursos del profesor */}
-        <Grid container spacing={2}>
-          {profesorData.courses.map((course) => (
-            <Grid item key={course.id} xs={12} sm={6}>
-              <Card
-                sx={{
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <CardMedia
-                  component="div"
-                  sx={{
-                    // 16:9
-                    pt: "56.25%",
-                  }}
-                  image={course.image}
-                />
-                <CardContent sx={{ flexGrow: 1 }}>
-                  <Typography gutterBottom variant="h5" component="h2">
-                    {course.name}
-                  </Typography>
-                  <Typography>{course.description}</Typography>
-                </CardContent>
-                <CardActions>
-                  <Link
-                    to={`/course/${course.id}`}
-                    style={{ textDecoration: "none" }}
-                  >
-                    <Button size="small">Ver</Button>
-                  </Link>
-                </CardActions>
-                <div style={{ padding: "16px" }}>
-                  <Typography>Alumnos: {course.students}</Typography>
-                </div>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
+      {/* Componente de pie de página */}
+      <Box
+        sx={{ bgcolor: "background.paper", marginTop: "40px" }}
+        component="footer"
+      >
+        <Copyright />
       </Box>
-    </Container>
+    </div>
   );
 };
 
-export default ProfesorProfile;
+// Exporta el componente UserProfile
+export default UserProfile;

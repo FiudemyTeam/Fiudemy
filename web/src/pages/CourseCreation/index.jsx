@@ -56,12 +56,6 @@ export default function CreateCourseView() {
   return (
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
-      <AppBar position="relative">
-        <Toolbar>
-          <div style={{ borderBottom: '1px dashed black' }}></div>
-        </Toolbar>      
-      
-      </AppBar>
       <Container sx={{ marginTop: "20px" }}>
         <Paper elevation={3} style={{ padding: "20px" }}>
           <Typography variant="h4" style={{ marginBottom: "10px" }}>
