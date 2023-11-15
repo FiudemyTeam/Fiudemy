@@ -33,23 +33,26 @@ const databaseData = [
     id: 2,
     title: "Fundamentos de Programación en Python",
     content: "Conceptos clave de programación",
+    videoLink: "https://www.youtube.com/watch?v=DAdRO6ByBoU",
   },
   {
     id: 3,
     title: "Estructuras de Control en Python",
     content: "Control de flujo en Python",
+    videoLink: "https://www.youtube.com/watch?v=nKPbfIU442g",
   },
   {
     id: 4,
     title: "Funciones y Módulos en Python",
     content: "Modularización y reutilización de código",
+    videoLink: "https://www.youtube.com/watch?v=tQZy0U8s9LY&ab_channel=HolaMundo",
   },
   {
     id: 5,
     title: "Trabajo con Listas y Tuplas en Python",
     content: "Manipulación de datos estructurados",
+    videoLink: "https://www.youtube.com/watch?v=tQZy0U8s9LY&ab_channel=HolaMundo",
   },
-  // Resto de los elementos en databaseData...
 ];
 
 export default function CourseView({ data }) {
@@ -209,12 +212,12 @@ export default function CourseView({ data }) {
                   sx={{ marginLeft: "auto" }}
                 />
               </AccordionSummary>
-              <AccordionDetails>
+              <AccordionDetails style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <Typography>{course.content}</Typography>
-                <br></br>
-                {youtubeVideoLink && (
-                <YouTube videoId={youtubeVideoLink.split("v=")[1]} />
-                 )}
+                <br />
+                {course.videoLink && (
+                  <YouTube videoId={course.videoLink.split("v=")[1]} />
+                )}
               </AccordionDetails>
             </Accordion>
           ))}
