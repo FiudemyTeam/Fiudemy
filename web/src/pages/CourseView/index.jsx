@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Checkbox, Button } from "@mui/material";
+import YouTube from "react-youtube";
 import {
   AppBar,
   Accordion,
@@ -26,6 +27,7 @@ const databaseData = [
     title: "Introducción a Python",
     content:
       "¡Bienvenidos al emocionante mundo de la programación con Python! Este módulo es el punto de partida perfecto para aquellos que desean aprender a programar desde cero o para quienes desean expandir sus habilidades en programación. Python es conocido por su sintaxis legible y su versatilidad, lo que lo convierte en un lenguaje de programación ideal para principiantes.",
+    videoLink: "https://www.youtube.com/watch?v=nKPbfIU442g",
   },
   {
     id: 2,
@@ -47,12 +49,16 @@ const databaseData = [
     title: "Trabajo con Listas y Tuplas en Python",
     content: "Manipulación de datos estructurados",
   },
+  // Resto de los elementos en databaseData...
 ];
 
 export default function CourseView({ data }) {
   const [subscribed, setSubscribed] = useState(data?.is_subscribed);
   const [expandedCourse, setExpandedCourse] = useState(null);
   const [selectedCourses, setSelectedCourses] = useState([]);
+  const [youtubeVideoLink, setYoutubeVideoLink] = useState(
+    "https://www.youtube.com/watch?v=nKPbfIU442g"
+  );
 
   const handleCourseExpansion = (courseId) => {
     if (expandedCourse === courseId) {
@@ -168,6 +174,7 @@ export default function CourseView({ data }) {
                 </Typography>
               </div>
             </Paper>
+
             <Stack
               sx={{ pt: 4 }}
               direction="row"
@@ -204,6 +211,10 @@ export default function CourseView({ data }) {
               </AccordionSummary>
               <AccordionDetails>
                 <Typography>{course.content}</Typography>
+                <br></br>
+                {youtubeVideoLink && (
+                <YouTube videoId={youtubeVideoLink.split("v=")[1]} />
+                 )}
               </AccordionDetails>
             </Accordion>
           ))}
