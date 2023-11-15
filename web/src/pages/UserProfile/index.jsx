@@ -1,17 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import Container from "@mui/material/Container";
-import Typography from "@mui/material/Typography";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import CardActions from "@mui/material/CardActions";
-import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Copyright from "@components/Copyright";
-import LinearProgress from "@mui/material/LinearProgress";
-
 import UserInformation from "./components/UserInformation";
 import Courses from "./components/Courses";
 import { getSubscribedCourses, fetchFavCourses } from "./api";
