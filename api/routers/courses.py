@@ -117,6 +117,18 @@ def post_course(course: CourseCreate,
     return new_course
 
 
+@router.delete("/{id}", response_model=CourseRead)
+def delete_course(id: int, session: Session = Depends(get_session)):
+    course = session.get(Course, id)
+    if not course:
+        raise HTTPException(status_code=404,
+                            detail="Course not found")
+
+    session.delete(course)
+    session.commit()
+    return Response(status_code=200)
+
+
 @router.post("/{id}/rate", response_model=CourseUserRate, status_code=200)
 def upsert_course_rate(id: int,
                        user: UserDependency,
