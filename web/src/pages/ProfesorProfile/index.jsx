@@ -4,6 +4,7 @@ import { Link } from "react-router-dom"; // Importa Link desde react-router-dom
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 import Copyright from "@components/Copyright";
 import UserInformation from "../UserProfile/components/UserInformation";
 import Courses from "../UserProfile/components/Courses";
@@ -11,7 +12,7 @@ import { getSubscribedCourses, fetchFavCourses } from "../UserProfile/api";
 import CourseCreation from "../CourseCreation";
 
 // Define el componente UserProfile
-const UserProfile = () => {
+const ProfesorProfile = () => {
   // Estado para almacenar cursos iniciados y favoritos
   const [startedCourses, setStartedCourses] = useState([]);
   const [favCourses, setFavCourses] = useState([]);
@@ -47,6 +48,9 @@ const UserProfile = () => {
     <div>
       <main>
         <Container maxWidth="md" sx={{ marginTop: "20px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <Typography variant="h4" component="h1">
+            Perfil del Profesor
+          </Typography>
           <UserInformation />
           <br></br><br></br>
           <Link to="/course-creation" style={{ textDecoration: "none" }}>
@@ -75,4 +79,4 @@ const UserProfile = () => {
 };
 
 // Exporta el componente UserProfile
-export default UserProfile;
+export default ProfesorProfile;

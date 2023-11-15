@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Copyright from "@components/Copyright";
 import UserInformation from "./components/UserInformation";
@@ -34,7 +35,10 @@ const UserProfile = () => {
   return (
     <div>
       <main>
-        <Container maxWidth="md" sx={{ marginTop: "20px" }}>
+        <Container maxWidth="md" sx={{ marginTop: "20px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <Typography variant="h4" component="h1">
+            Perfil del Usuario
+          </Typography>
           <UserInformation />
           <Courses
             courses={startedCourses}
