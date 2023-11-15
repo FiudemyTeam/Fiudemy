@@ -3,10 +3,10 @@ import Landpage from "@pages/Landpage";
 import LogIn from "@pages/Login";
 import Register from "@pages/Register";
 import UserProfile from "@pages/UserProfile";
+import ProfesorProfile from "@pages/ProfesorProfile";
 import CourseDetail from "@pages/CourseDetail";
 import Header from "@components/Header";
 import { SearchContextProvider } from "@context/SearchContext";
-import CreateCourseView from "../../pages/CourseCreation";
 
 const WithHeader = ({ component }) => (
   <>
@@ -32,6 +32,10 @@ const Router = () => {
       <Route
         path="/profile"
         element={<WithHeader component={<UserProfile />} />}
+      ></Route>
+      <Route
+        path="/profesor"
+        element={<WithHeader component={<ProfesorProfile />} />}
       ></Route>
       <Route
         path="/course/:id"
