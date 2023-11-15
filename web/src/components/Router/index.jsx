@@ -8,6 +8,7 @@ import CourseDetail from "@pages/CourseDetail";
 import Header from "@components/Header";
 import CourseCreation from "@pages/CourseCreation";
 import { SearchContextProvider } from "@context/SearchContext";
+import Donation from "@pages/Donation";
 
 const WithHeader = ({ component }) => (
   <>
@@ -37,6 +38,10 @@ const Router = () => {
       <Route
         path="/profesor"
         element={<WithHeader component={<ProfesorProfile />} />}
+      ></Route>
+      <Route
+        path="/donation"
+        element={<WithHeader component={<Donation />} />}
       ></Route>
       <Route
         path="/course-creation"

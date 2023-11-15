@@ -41,7 +41,7 @@ def seed_db():
             description='Aprende los fundamentos de JavaScript y crea la lógica de tu página web.',
             order=2,
             type='video',
-            value='https://www.youtube.com/watch?v=ivdTnPl1ND0&themeRefresh=1',
+            value='https://www.youtube.com/watch?v=ivdTnPl1ND0',
             course_id=1
         )
     ]

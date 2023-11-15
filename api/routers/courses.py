@@ -1,7 +1,6 @@
 from datetime import datetime
 from typing import List, Optional
 
-import segno
 from dependencies import UserDependency, get_session
 from fastapi import APIRouter, HTTPException, Response, Depends
 from models.course_material_views import CourseMaterialView
