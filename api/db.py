@@ -172,15 +172,53 @@ def seed_db():
         CourseMaterialView(material_id=1, user_id=1),
     ]
 
-    default_user = User(
-        username="default_username",
-        password=auth_handler.get_password_hash("default_password"),
-        email="default@example.com",
-        created_at=datetime.now(),
-        course_rates=[],
-        course_favorites=[],
-        course_subscriptions=[]
-    )
+    users = [
+        User(
+            username="john_doe",
+            password=auth_handler.get_password_hash("password"),
+            email="john_doe@example.com",
+            created_at=datetime.now(),
+            course_rates=[],
+            course_favorites=[],
+            course_subscriptions=[]
+        ),
+        User(
+            username="jane_smith",
+            password=auth_handler.get_password_hash("password"),
+            email="jane_smith@example.com",
+            created_at=datetime.now(),
+            course_rates=[],
+            course_favorites=[],
+            course_subscriptions=[]
+        ),
+        User(
+            username="alex_jones",
+            password=auth_handler.get_password_hash("password"),
+            email="alex_jones@example.com",
+            created_at=datetime.now(),
+            course_rates=[],
+            course_favorites=[],
+            course_subscriptions=[]
+        ),
+        User(
+            username="emily_brown",
+            password=auth_handler.get_password_hash("password"),
+            email="emily_brown@example.com",
+            created_at=datetime.now(),
+            course_rates=[],
+            course_favorites=[],
+            course_subscriptions=[]
+        ),
+        User(
+            username="michael_taylor",
+            password=auth_handler.get_password_hash("password"),
+            email="michael_taylor@example.com",
+            created_at=datetime.now(),
+            course_rates=[],
+            course_favorites=[],
+            course_subscriptions=[]
+        )
+    ]
 
     categories = [
         Category(id=1, name="Programacion"),
@@ -198,7 +236,8 @@ def seed_db():
         for course_material in course_materials:
             session.add(course_material)
 
-        session.add(default_user)
+        for user in users:
+            session.add(user)        
 
         for course_user_rate in course_user_rates:
             session.add(course_user_rate)
