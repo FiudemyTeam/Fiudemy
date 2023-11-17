@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Checkbox, Button } from "@mui/material";
+import YouTube from "react-youtube";
 import {
   AppBar,
   Accordion,
@@ -20,39 +22,16 @@ import {
 } from "@mui/material";
 import { subscribe } from "./api";
 
-const databaseData = [
-  {
-    id: 1,
-    title: "Introducción a Python",
-    content:
-      "¡Bienvenidos al emocionante mundo de la programación con Python! Este módulo es el punto de partida perfecto para aquellos que desean aprender a programar desde cero o para quienes desean expandir sus habilidades en programación. Python es conocido por su sintaxis legible y su versatilidad, lo que lo convierte en un lenguaje de programación ideal para principiantes.",
-  },
-  {
-    id: 2,
-    title: "Fundamentos de Programación en Python",
-    content: "Conceptos clave de programación",
-  },
-  {
-    id: 3,
-    title: "Estructuras de Control en Python",
-    content: "Control de flujo en Python",
-  },
-  {
-    id: 4,
-    title: "Funciones y Módulos en Python",
-    content: "Modularización y reutilización de código",
-  },
-  {
-    id: 5,
-    title: "Trabajo con Listas y Tuplas en Python",
-    content: "Manipulación de datos estructurados",
-  },
-];
+
+
 
 export default function CourseView({ data }) {
   const [subscribed, setSubscribed] = useState(data?.is_subscribed);
   const [expandedCourse, setExpandedCourse] = useState(null);
   const [selectedCourses, setSelectedCourses] = useState([]);
+  const [youtubeVideoLink, setYoutubeVideoLink] = useState(
+    "https://www.youtube.com/watch?v=nKPbfIU442g"
+  );
 
   const handleCourseExpansion = (courseId) => {
     if (expandedCourse === courseId) {
@@ -168,6 +147,7 @@ export default function CourseView({ data }) {
                 </Typography>
               </div>
             </Paper>
+
             <Stack
               sx={{ pt: 4 }}
               direction="row"
@@ -183,12 +163,17 @@ export default function CourseView({ data }) {
                   Inscribirse al curso
                 </Button>
               )}
-              <Button variant="outlined">Inscribirse a la certificación</Button>
+              <Button variant="contained">Inscribirse a la certificación</Button>
+              <Link to="/donation" style={{ textDecoration: "none" }}>
+                <Button variant="contained">
+                  Hacer una donacion
+                </Button>
+              </Link>
             </Stack>
           </Container>
         </Box>
         <Container sx={{ py: 8 }} maxWidth="md">
-          {databaseData.map((course) => (
+          {data?.course_materials.map((course) => (
             <Accordion key={course.id} expanded={expandedCourse === course.id}>
               <AccordionSummary
                 onClick={() => handleCourseExpansion(course.id)}
@@ -202,8 +187,13 @@ export default function CourseView({ data }) {
                   sx={{ marginLeft: "auto" }}
                 />
               </AccordionSummary>
-              <AccordionDetails>
-                <Typography>{course.content}</Typography>
+              <AccordionDetails style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <Typography>{course.description}</Typography>
+                <br />
+                {course.type === "video" && course.value && (
+                  <YouTube videoId={course.value.split("v=")[1]} />
+                )}
+
               </AccordionDetails>
             </Accordion>
           ))}

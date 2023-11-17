@@ -57,9 +57,6 @@ const UserInformation = () => {
 
   return (
     <div style={{ marginTop: "80px" }}>
-      <Title variant="h4" style={{ marginBottom: "20px" }}>
-        Perfil
-      </Title>
       <StyledCard>
         <CardContent>
           <TextField

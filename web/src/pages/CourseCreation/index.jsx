@@ -21,7 +21,7 @@ export default function CreateCourseView() {
   const [courseData, setCourseData] = useState({
     title: '',
     description: '',
-    modules: [{ moduleTitle: '', moduleContent: '' }],
+    modules: [{ moduleTitle: '', moduleContent: '', moduleVideo: '' }],
   });
 
   const handleChange = (event, index) => {
@@ -38,7 +38,7 @@ export default function CreateCourseView() {
   const addModule = () => {
     setCourseData({
       ...courseData,
-      modules: [...courseData.modules, { moduleTitle: '', moduleContent: '' }],
+      modules: [...courseData.modules, { moduleTitle: '', moduleContent: '', moduleVideo: '' }],
     });
   };
 
@@ -56,12 +56,6 @@ export default function CreateCourseView() {
   return (
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
-      <AppBar position="relative">
-        <Toolbar>
-          <div style={{ borderBottom: '1px dashed black' }}></div>
-        </Toolbar>      
-      
-      </AppBar>
       <Container sx={{ marginTop: "20px" }}>
         <Paper elevation={3} style={{ padding: "20px" }}>
           <Typography variant="h4" style={{ marginBottom: "10px" }}>
@@ -104,6 +98,15 @@ export default function CreateCourseView() {
                 value={module.moduleContent}
                 onChange={(e) => handleChange(e, index)}
                 style={{ marginBottom: "20px" }}
+              />
+              <TextField
+              name="moduleVideo"
+              label={`Link del video ${index + 1}`}
+              variant="outlined"
+              fullWidth
+              value={module.moduleContent}
+              onChange={(e) => handleChange(e, index)}
+              style={{ marginBottom: "20px" }}
               />
               <IconButton onClick={() => deleteModule(index)} color="error">
                 <DeleteIcon />
