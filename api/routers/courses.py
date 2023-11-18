@@ -36,7 +36,8 @@ async def get_courses(
         User.id == user.id)).label("is_favorite")
     is_subscribed_sub = select(Course.user_subscriptions.any(
         User.id == user.id)).label("is_subscribed")
-    avg_rate_sub = select([func.coalesce(func.round(func.avg(CourseUserRate.rate)), 0)]).where(CourseUserRate.course_id == Course.id).label("total_rate")
+    avg_rate_sub = select([func.coalesce(func.round(func.avg(CourseUserRate.rate)), 0)]).where(
+        CourseUserRate.course_id == Course.id).label("total_rate")
     query = select(Course, is_favorite_sub, is_subscribed_sub, avg_rate_sub)
     filters = []
 
@@ -98,9 +99,12 @@ async def get_course(id: int,
 
     viewed_material_ids = session.exec(
         select(CourseMaterialView.material_id)
-        .where(CourseMaterialView.material_id.in_(
-            [material.id for material in course.course_materials]
-        ))
+        .where(
+            CourseMaterialView.material_id.in_(
+                [material.id for material in course.course_materials]
+            ),
+            CourseMaterialView.user_id == user.id
+        )
     ).all()
     for course_material in course.course_materials:
         if course_material.id in viewed_material_ids:
@@ -293,18 +297,22 @@ def subscribe_course(id: int,
         session.commit()
     return {"is_subscribed": True}
 
+
 @router.delete("/{id}/unsubscribe", response_model=CourseUserFavorite)
 def unsubscribe_course(id: int,
                        user: UserDependency,
                        session: Session = Depends(get_session)):
-    existing_sub = session.query(CourseUserSubscription).filter_by(user_id=user.id, course_id=id).first()
+    existing_sub = session.query(CourseUserSubscription).filter_by(
+        user_id=user.id, course_id=id).first()
     if existing_sub:
         session.delete(existing_sub)
         session.commit()
     else:
-        raise HTTPException(status_code=404, detail="Not subscribed to this course")
-    
+        raise HTTPException(
+            status_code=404, detail="Not subscribed to this course")
+
     return {"is_subscribed": False}
+
 
 @router.get("/subscribed/", response_model=List[CourseRead])
 def get_subscribed_courses(user: UserDependency, session: Session = Depends(get_session)):
