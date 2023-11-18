@@ -172,7 +172,7 @@ export default function CourseView({ data, handler }) {
                   Básico
                 </Typography>
               </div>
-              {data?.is_subscribed && (
+              {data?.is_subscribed ? (
                 <div>
                   <Typography
                     variant="subtitle1"
@@ -183,6 +183,19 @@ export default function CourseView({ data, handler }) {
                   </Typography>
                   <Typography variant="subtitle2" textAlign="center">
                     {completedPercentage.toFixed(0)}%
+                  </Typography>
+                </div>
+              ) : (
+                <div>
+                  <Typography
+                    variant="subtitle1"
+                    textAlign="center"
+                    fontWeight="bold"
+                  >
+                    Inscriptos
+                  </Typography>
+                  <Typography variant="subtitle2" textAlign="center">
+                    {data?.total_subscriptions}
                   </Typography>
                 </div>
               )}
