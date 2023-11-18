@@ -41,8 +41,8 @@ export default function CourseView({ data }) {
   };
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+    setSubscribed(data?.is_subscribed);
+  }, [data]);
 
   const handleSubscription = async () => {
     try {
@@ -154,22 +154,19 @@ export default function CourseView({ data }) {
               spacing={2}
               justifyContent="center"
             >
-              {data?.is_subscribed || subscribed ? (
-                <Button onClick={handleUnsubscription} variant="contained" 
-                  sx={{ 
-                    backgroundColor: '#ff0000', 
-                    color: '#ffffff', 
-                    '&:hover': {
-                      backgroundColor: '#cc0000',
-                    }, 
-                  }}>
-                  Desuscribirse del curso
-                </Button>
-              ) : (
-                <Button onClick={handleSubscription} variant="contained">
-                  Inscribirse al curso
-                </Button>
-              )}
+              <Button
+                onClick={subscribed ? handleUnsubscription : handleSubscription}
+                variant="contained"
+                sx={{
+                  backgroundColor: subscribed ? '#ff0000' : undefined,
+                  color: subscribed ? '#ffffff' : undefined,
+                  '&:hover': {
+                    backgroundColor: subscribed ? '#cc0000' : undefined,
+                  },
+                }}
+              >
+                {subscribed ? 'Desuscribirse del curso' : 'Inscribirse al curso'}
+              </Button>
               <Button variant="contained">Inscribirse a la certificación</Button>
               <Link to="/donation" style={{ textDecoration: "none" }}>
                 <Button variant="contained">
