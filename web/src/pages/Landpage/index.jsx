@@ -15,6 +15,9 @@ export default function Landpage() {
             pb: 6,
           }}
         >
+        <Container sx={{ py: 2 }} maxWidth="md">
+          <CoursesFilters />
+        </Container>
           <Container maxWidth="sm">
             <Typography
               component="h1"
@@ -41,10 +44,6 @@ export default function Landpage() {
             </Typography>
           </Container>
         </Box>
-
-        <Container sx={{ py: 2 }} maxWidth="md">
-          <CoursesFilters />
-        </Container>
         <Container sx={{ py: 2 }} maxWidth="md">
           <CoursesGrid />
         </Container>
