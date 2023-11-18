@@ -1,51 +1,42 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Checkbox, Button } from "@mui/material";
 import YouTube from "react-youtube";
 import {
-  AppBar,
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  Card,
-  CardActions,
-  CssBaseline,
-  Grid,
   Stack,
   Box,
-  Toolbar,
   Typography,
   Container,
-  createTheme,
-  ThemeProvider,
   Paper,
 } from "@mui/material";
 import { subscribe } from "./api";
-
-
 
 
 export default function CourseView({ data }) {
   const [subscribed, setSubscribed] = useState(data?.is_subscribed);
   const [expandedCourse, setExpandedCourse] = useState(null);
   const [selectedCourses, setSelectedCourses] = useState([]);
-  const [youtubeVideoLink, setYoutubeVideoLink] = useState(
-    "https://www.youtube.com/watch?v=nKPbfIU442g"
-  );
 
   const handleCourseExpansion = (courseId) => {
-    if (expandedCourse === courseId) {
-      setExpandedCourse(null);
-    } else {
-      setExpandedCourse(courseId);
+    if (data?.is_subscribed || subscribed) {
+      if (expandedCourse === courseId) {
+        setExpandedCourse(null);
+      } else {
+        setExpandedCourse(courseId);
+      }
     }
   };
 
   const handleCourseSelection = (courseId) => {
-    if (selectedCourses.includes(courseId)) {
-      setSelectedCourses(selectedCourses.filter((id) => id !== courseId));
-    } else {
-      setSelectedCourses([...selectedCourses, courseId]);
+    if (data?.is_subscribed || subscribed) {
+      if (selectedCourses.includes(courseId)) {
+        setSelectedCourses(selectedCourses.filter((id) => id !== courseId));
+      } else {
+        setSelectedCourses([...selectedCourses, courseId]);
+      }
     }
   };
 
@@ -173,22 +164,33 @@ export default function CourseView({ data }) {
           </Container>
         </Box>
         <Container sx={{ py: 8 }} maxWidth="md">
+          <Typography variant="h4" sx={{ mb: 2 }}>
+            Material      
+          </Typography>
           {data?.course_materials.map((course) => (
             <Accordion key={course.id} expanded={expandedCourse === course.id}>
               <AccordionSummary
                 onClick={() => handleCourseExpansion(course.id)}
               >
-                <Typography gutterBottom variant="h5" component="h2">
+                <Typography gutterBottom component="h3" variant="h6" 
+                  sx={{
+                    color: "#007bff",
+                    fontWeight: "bold",
+                  }}>
                   {course.title}
                 </Typography>
-                <Checkbox
-                  checked={selectedCourses.includes(course.id)}
-                  onChange={() => handleCourseSelection(course.id)}
-                  sx={{ marginLeft: "auto" }}
-                />
+                {(data?.is_subscribed || subscribed) && (
+                  <Checkbox
+                    checked={selectedCourses.includes(course.id)}
+                    onChange={() => handleCourseSelection(course.id)}
+                    sx={{ marginLeft: "auto" }}
+                  />
+                )}
               </AccordionSummary>
               <AccordionDetails style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <Typography>{course.description}</Typography>
+                <Typography>
+                  {course.description}
+                </Typography>
                 <br />
                 {course.type === "video" && course.value && (
                   <YouTube videoId={course.value.split("v=")[1]} />
