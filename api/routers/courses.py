@@ -86,15 +86,18 @@ async def get_course(id: int,
 
     query = select(Course,
                    is_favorite_sub,
-                   is_subscribed_sub
-                   ).where(Course.id == id)
-    (course, is_favorite, is_subscribed) = session.exec(query).first()
+                   is_subscribed_sub,
+                   User.username,
+                   ).join(User, Course.teacher_id == User.id
+                          ).where(Course.id == id)
+    (course, is_favorite, is_subscribed, username) = session.exec(query).first()
     if not course:
         raise HTTPException(status_code=404, detail="Course not found")
     course = CourseReadWithMaterials.from_orm(course)
     course.is_favorite = is_favorite
     course.is_subscribed = is_subscribed
     course.total_subscriptions = course_total_subscriptions
+    course.teacher_name = username
     course.course_materials.sort(key=lambda x: x.order, reverse=False)
 
     viewed_material_ids = session.exec(

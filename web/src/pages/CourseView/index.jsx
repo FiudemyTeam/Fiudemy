@@ -146,7 +146,9 @@ export default function CourseView({ data, handler }) {
                 >
                   Instructor
                 </Typography>
-                <Typography variant="subtitle2">Enrique Martinez</Typography>
+                <Typography variant="subtitle2">
+                  {data?.teacher_name}
+                </Typography>
               </div>
               <div>
                 <Typography
