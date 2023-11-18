@@ -169,7 +169,7 @@ def seed_db():
     ]
 
     course_material_views = [
-        CourseMaterialView(material_id=1, user_id=1),
+        # CourseMaterialView(material_id=1, user_id=1),
     ]
 
     users = [
@@ -237,7 +237,7 @@ def seed_db():
             session.add(course_material)
 
         for user in users:
-            session.add(user)        
+            session.add(user)
 
         for course_user_rate in course_user_rates:
             session.add(course_user_rate)
