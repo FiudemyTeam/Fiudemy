@@ -18,3 +18,19 @@ export async function subscribe({ course_id }) {
     throw new Error("Req error: ", error);
   }
 }
+
+export async function unsubscribe({ course_id }) {
+  try {
+    const response = await axios.delete(
+      `${API_HOST}/courses/${course_id}/unsubscribe`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error("Req error: ", error);
+  }
+}

@@ -12,7 +12,7 @@ import {
   Container,
   Paper,
 } from "@mui/material";
-import { subscribe } from "./api";
+import { subscribe, unsubscribe } from "./api";
 
 
 export default function CourseView({ data }) {
@@ -48,6 +48,15 @@ export default function CourseView({ data }) {
     try {
       await subscribe({ course_id: data.id });
       setSubscribed(true);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleUnsubscription = async () => {
+    try {
+      await unsubscribe({ course_id: data.id });
+      setSubscribed(false);
     } catch (error) {
       console.log(error);
     }
@@ -146,8 +155,15 @@ export default function CourseView({ data }) {
               justifyContent="center"
             >
               {data?.is_subscribed || subscribed ? (
-                <Button variant="contained" disabled>
-                  Inscripto
+                <Button onClick={handleUnsubscription} variant="contained" 
+                  sx={{ 
+                    backgroundColor: '#ff0000', 
+                    color: '#ffffff', 
+                    '&:hover': {
+                      backgroundColor: '#cc0000',
+                    }, 
+                  }}>
+                  Desuscribirse del curso
                 </Button>
               ) : (
                 <Button onClick={handleSubscription} variant="contained">

@@ -293,6 +293,18 @@ def subscribe_course(id: int,
         session.commit()
     return {"is_subscribed": True}
 
+@router.delete("/{id}/unsubscribe", response_model=CourseUserFavorite)
+def unsubscribe_course(id: int,
+                       user: UserDependency,
+                       session: Session = Depends(get_session)):
+    existing_sub = session.query(CourseUserSubscription).filter_by(user_id=user.id, course_id=id).first()
+    if existing_sub:
+        session.delete(existing_sub)
+        session.commit()
+    else:
+        raise HTTPException(status_code=404, detail="Not subscribed to this course")
+    
+    return {"is_subscribed": False}
 
 @router.get("/subscribed/", response_model=List[CourseRead])
 def get_subscribed_courses(user: UserDependency, session: Session = Depends(get_session)):
