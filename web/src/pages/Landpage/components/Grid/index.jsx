@@ -79,7 +79,7 @@ const CoursesGrid = () => {
                 onClick={() => handleFavoriteClick(course)}>
                 <FavoriteIcon />
               </IconButton>
-              <RatingStars rate={course.rate ?? 0 } fontSize="small"/>
+              <RatingStars rate={course.total_rate ?? 0 } fontSize="small"/>
             </CardActions>
           </Card>
         </Grid>

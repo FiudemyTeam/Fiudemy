@@ -77,6 +77,9 @@ export default function App() {
                 labelId="cat-rating"
               >
                 <MenuItem value={undefined}>Todas</MenuItem>
+                <MenuItem value="0">
+                  0 <StarIcon fontSize="1px" />
+                </MenuItem>
                 <MenuItem value="1">
                   1 <StarIcon fontSize="1px" />
                 </MenuItem>

@@ -41,6 +41,7 @@ class CourseRead(CourseBase):
     teacher_id: Optional[int]
     is_subscribed: Optional[bool]
     total_subscriptions: Optional[int]
+    total_rate: Optional[int]
 
 
 class CourseReadWithMaterials(CourseRead):

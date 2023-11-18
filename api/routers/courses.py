@@ -36,7 +36,8 @@ async def get_courses(
         User.id == user.id)).label("is_favorite")
     is_subscribed_sub = select(Course.user_subscriptions.any(
         User.id == user.id)).label("is_subscribed")
-    query = select(Course, is_favorite_sub, is_subscribed_sub)
+    avg_rate_sub = select([func.coalesce(func.round(func.avg(CourseUserRate.rate)), 0)]).where(CourseUserRate.course_id == Course.id).label("total_rate")
+    query = select(Course, is_favorite_sub, is_subscribed_sub, avg_rate_sub)
     filters = []
 
     if category:
@@ -46,7 +47,7 @@ async def get_courses(
         filters.append(Course.name.like(f"%{searchString}%"))
 
     if rate is not None:
-        filters.append(Course.user_rates.any(CourseUserRate.rate == rate))
+        filters.append(avg_rate_sub == rate)
 
     if favorite:
         filters.append(Course.user_favorites.any(User.id == user.id))
@@ -55,7 +56,7 @@ async def get_courses(
     results = session.exec(query)
 
     courses = []
-    for course, is_favorite, is_subscribed in results:
+    for course, is_favorite, is_subscribed, total_rate in results:
         course = CourseRead.from_orm(course)
         course.is_favorite = is_favorite
         course.is_subscribed = is_subscribed
@@ -63,6 +64,7 @@ async def get_courses(
             select([func.count(CourseUserSubscription.user_id)])
             .where(CourseUserSubscription.course_id == course.id)
         ).one()
+        course.total_rate = total_rate
         courses.append(course)
 
     return courses
