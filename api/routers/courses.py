@@ -38,7 +38,9 @@ async def get_courses(
         User.id == user.id)).label("is_subscribed")
     avg_rate_sub = select([func.coalesce(func.round(func.avg(CourseUserRate.rate)), 0)]).where(
         CourseUserRate.course_id == Course.id).label("total_rate")
-    query = select(Course, is_favorite_sub, is_subscribed_sub, avg_rate_sub)
+    is_owner_sub = (Course.teacher_id == user.id).label("is_owner")
+    query = select(Course, is_favorite_sub, is_subscribed_sub,
+                   avg_rate_sub, is_owner_sub)
     filters = []
 
     if category:
@@ -57,7 +59,7 @@ async def get_courses(
     results = session.exec(query)
 
     courses = []
-    for course, is_favorite, is_subscribed, total_rate in results:
+    for course, is_favorite, is_subscribed, total_rate, is_owner in results:
         course = CourseRead.from_orm(course)
         course.is_favorite = is_favorite
         course.is_subscribed = is_subscribed
@@ -66,6 +68,7 @@ async def get_courses(
             .where(CourseUserSubscription.course_id == course.id)
         ).one()
         course.total_rate = total_rate
+        course.is_owner = is_owner
         courses.append(course)
 
     return courses
