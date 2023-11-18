@@ -43,6 +43,15 @@ def seed_db():
             type='video',
             value='https://www.youtube.com/watch?v=ivdTnPl1ND0',
             course_id=1
+        ),
+        CourseMaterial(
+            id=3,
+            title='Introducción a Adobe Photoshop',
+            description='Aprende los conceptos básicos de Adobe Photoshop y domina el retoque de imágenes.',
+            order=1,
+            type='video',
+            value='https://www.youtube.com/watch?v=abc123',
+            course_id=2
         )
     ]
 
@@ -68,7 +77,7 @@ def seed_db():
             category_id=2,
             user_favorites=[],
             course_materials=[],
-            teacher_id=1,
+            teacher_id=2,
             user_subscriptions=[]
         ),
         Course(
