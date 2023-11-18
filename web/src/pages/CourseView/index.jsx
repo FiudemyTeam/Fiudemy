@@ -203,40 +203,44 @@ export default function CourseView({ data, handler }) {
               )}
             </Paper>
 
-            <Stack
-              sx={{ pt: 4 }}
-              direction="row"
-              spacing={2}
-              justifyContent="center"
-            >
-              <Button
-                onClick={
-                  data?.is_subscribed
-                    ? handleUnsubscription
-                    : handleSubscription
-                }
-                variant="contained"
-                sx={{
-                  backgroundColor: data?.is_subscribed ? "#ff0000" : undefined,
-                  color: data?.is_subscribed ? "#ffffff" : undefined,
-                  "&:hover": {
-                    backgroundColor: data?.is_subscribed
-                      ? "#cc0000"
-                      : undefined,
-                  },
-                }}
+            {!data?.is_owner && (
+              <Stack
+                sx={{ pt: 4 }}
+                direction="row"
+                spacing={2}
+                justifyContent="center"
               >
-                {data?.is_subscribed
-                  ? "Desuscribirse del curso"
-                  : "Inscribirse al curso"}
-              </Button>
-              <Button variant="contained">
-                Inscribirse a la certificación
-              </Button>
-              <Link to="/donation" style={{ textDecoration: "none" }}>
-                <Button variant="contained">Hacer una donacion</Button>
-              </Link>
-            </Stack>
+                <Button
+                  onClick={
+                    data?.is_subscribed
+                      ? handleUnsubscription
+                      : handleSubscription
+                  }
+                  variant="contained"
+                  sx={{
+                    backgroundColor: data?.is_subscribed
+                      ? "#ff0000"
+                      : undefined,
+                    color: data?.is_subscribed ? "#ffffff" : undefined,
+                    "&:hover": {
+                      backgroundColor: data?.is_subscribed
+                        ? "#cc0000"
+                        : undefined,
+                    },
+                  }}
+                >
+                  {data?.is_subscribed
+                    ? "Desuscribirse del curso"
+                    : "Inscribirse al curso"}
+                </Button>
+                <Button variant="contained">
+                  Inscribirse a la certificación
+                </Button>
+                <Link to="/donation" style={{ textDecoration: "none" }}>
+                  <Button variant="contained">Hacer una donacion</Button>
+                </Link>
+              </Stack>
+            )}
           </Container>
         </Box>
         <Container sx={{ py: 8 }} maxWidth="md">
