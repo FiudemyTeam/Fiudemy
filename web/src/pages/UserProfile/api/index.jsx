@@ -31,3 +31,16 @@ export async function fetchFavCourses() {
     return [];
   }
 }
+
+export async function getProgress(course_id) {
+  try {
+    const response = await axios.get(`${API_HOST}/progress/${course_id}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+    return response.data.progress;
+  } catch (error) {
+    throw new Error("Req error: ", error);
+  }
+}
