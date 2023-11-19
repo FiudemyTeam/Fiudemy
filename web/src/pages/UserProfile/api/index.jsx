@@ -34,7 +34,7 @@ export async function fetchFavCourses() {
 
 export async function getProgress(course_id) {
   try {
-    const response = await axios.get(`${API_HOST}/progress/${course_id}`, {
+    const response = await axios.get(`${API_HOST}/courses/${course_id}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
