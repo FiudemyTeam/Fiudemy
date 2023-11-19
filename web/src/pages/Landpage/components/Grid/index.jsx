@@ -8,12 +8,14 @@ import {
   Grid,
   Typography,
   IconButton,
+  Box,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import { SearchContext } from "@context/SearchContext";
 import RatingStars from "../RatingStars";
 import { fetchCourses, favoriteCourseToggle } from "./api";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import TeacherIcon from "@mui/icons-material/HistoryEdu";
 
 const CoursesGrid = () => {
   const { searchString, category, rate, favorite } = useContext(SearchContext);
@@ -58,9 +60,42 @@ const CoursesGrid = () => {
               sx={{
                 // 16:9
                 pt: "56.25%",
+                position: "relative",
               }}
               image={course?.image}
-            />
+            >
+              <Box
+                sx={{
+                  position: "absolute",
+                  bottom: -20,
+                  right: 8,
+                  zIndex: 1,
+                  backgroundColor: "white",
+                  borderRadius: "30%",
+                  padding: course?.is_owner ? 0.5 : 0,
+                  display: "flex",
+                  borderColor: "red",
+                  boxShadow: "2px 4px 4px rgba(0, 0, 0, 0.2)",
+                }}
+              >
+                {course?.is_owner ? (
+                  <TeacherIcon sx={{ color: "black", fontSize: 30 }} />
+                ) : (
+                  <IconButton
+                    onClick={() => handleFavoriteClick(course)}
+                    sx={{
+                      color: course?.is_favorite ? "red" : "black",
+                      "&:hover": {
+                        color: "red",
+                      },
+                      fontSize: 30,
+                    }}
+                  >
+                    <FavoriteIcon />
+                  </IconButton>
+                )}
+              </Box>
+            </CardMedia>
             <CardContent sx={{ flexGrow: 1 }}>
               <Typography gutterBottom variant="h5" component="h2">
                 {course?.name}
@@ -74,14 +109,6 @@ const CoursesGrid = () => {
               >
                 <Button size="small">Ver</Button>
               </Link>
-              {!course?.is_owner && (
-                <IconButton
-                  color={course?.is_favorite ? "error" : "default"}
-                  onClick={() => handleFavoriteClick(course)}
-                >
-                  <FavoriteIcon />
-                </IconButton>
-              )}
               <RatingStars rate={course?.total_rate ?? 0} fontSize="small" />
             </CardActions>
           </Card>
