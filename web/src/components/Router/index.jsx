@@ -8,6 +8,7 @@ import CourseDetail from "@pages/CourseDetail";
 import Header from "@components/Header";
 import CourseCreation from "@pages/CourseCreation";
 import { SearchContextProvider } from "@context/SearchContext";
+import { CourseContextProvider } from "@context/CourseContext";
 import Donation from "@pages/Donation";
 
 const WithHeader = ({ component }) => (
@@ -27,7 +28,7 @@ const Router = () => {
         path="/home"
         element={
           <SearchContextProvider>
-            <WithHeader component={<Landpage />} />{" "}
+            <WithHeader component={<Landpage />} />
           </SearchContextProvider>
         }
       ></Route>
@@ -49,7 +50,11 @@ const Router = () => {
       ></Route>
       <Route
         path="/course/:id"
-        element={<WithHeader component={<CourseDetail />} />}
+        element={
+          <CourseContextProvider>
+            <WithHeader component={<CourseDetail />} />
+          </CourseContextProvider>
+        }
       ></Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

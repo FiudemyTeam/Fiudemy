@@ -18,3 +18,52 @@ export async function subscribe({ course_id }) {
     throw new Error("Req error: ", error);
   }
 }
+
+export async function unsubscribe({ course_id }) {
+  try {
+    const response = await axios.delete(
+      `${API_HOST}/courses/${course_id}/unsubscribe`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error("Req error: ", error);
+  }
+}
+
+export async function viewCourse({ course_id, material_id }) {
+  try {
+    const response = await axios.post(
+      `${API_HOST}/courses/${course_id}/material/${material_id}/view`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error("Req error: ", error);
+  }
+}
+
+export async function unviewCourse({ course_id, material_id }) {
+  try {
+    const response = await axios.delete(
+      `${API_HOST}/courses/${course_id}/material/${material_id}/view`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error("Req error: ", error);
+  }
+}
