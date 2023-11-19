@@ -22,12 +22,12 @@ export default function CourseView({ data, handler }) {
 
   const { isCompleted, setIsCompleted } = useContext(CourseContext);
 
-  const handleCourseExpansion = (courseId) => {
-    if (data?.is_subscribed) {
-      if (expandedCourse === courseId) {
+  const handleCourseExpansion = (course) => {
+    if (data?.is_subscribed || data?.is_owner) {
+      if (expandedCourse === course.id) {
         setExpandedCourse(null);
       } else {
-        setExpandedCourse(courseId);
+        setExpandedCourse(course.id);
       }
     }
   };
@@ -249,9 +249,7 @@ export default function CourseView({ data, handler }) {
           </Typography>
           {data?.course_materials.map((course) => (
             <Accordion key={course.id} expanded={expandedCourse === course.id}>
-              <AccordionSummary
-                onClick={() => handleCourseExpansion(course.id)}
-              >
+              <AccordionSummary onClick={() => handleCourseExpansion(course)}>
                 <Typography
                   gutterBottom
                   component="h3"
