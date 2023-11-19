@@ -45,6 +45,8 @@ class CourseRead(CourseBase):
     total_rate: Optional[int]
     teacher_name: Optional[str]
     is_owner: Optional[bool]
+    progress: Optional[int] = 0
+
 
 
 class CourseReadWithMaterials(CourseRead):

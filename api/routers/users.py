@@ -1,6 +1,9 @@
 from fastapi import APIRouter, HTTPException, Depends
 from auth import AuthHandler
-from sqlmodel import Session
+from sqlmodel import Session, select
+from models.course_materials import CourseMaterial
+from models.course_material_views import CourseMaterialView
+from models.courses import Course, CourseReadWithMaterials
 
 from models.users import UserInput, User, UserLogin, UserRead, UserUpdate
 from repositories.user_repository import select_all_users, find_user

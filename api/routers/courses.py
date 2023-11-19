@@ -30,6 +30,7 @@ async def get_courses(
         searchString: Optional[str] = None,
         rate: Optional[int] = None,
         favorite: Optional[bool] = None,
+        progress: Optional[int] = 0,
         session: Session = Depends(get_session)
 ):
     is_favorite_sub = select(Course.user_favorites.any(
@@ -59,7 +60,7 @@ async def get_courses(
     results = session.exec(query)
 
     courses = []
-    for course, is_favorite, is_subscribed, total_rate, is_owner in results:
+    for course, is_favorite, is_subscribed, total_rate, is_owner in results:        
         course = CourseRead.from_orm(course)
         course.is_favorite = is_favorite
         course.is_subscribed = is_subscribed
@@ -69,6 +70,7 @@ async def get_courses(
         ).one()
         course.total_rate = total_rate
         course.is_owner = is_owner
+
         courses.append(course)
 
     return courses
@@ -120,6 +122,10 @@ async def get_course(id: int,
             course_material.viewed = True
         else:
             course_material.viewed = False
+
+    total_materials = len(session.exec(select(CourseMaterial).where(CourseMaterial.course_id == course.id)).all())
+    course.progress = (len(viewed_material_ids) / total_materials) * 100 if total_materials !=0 else 0
+
 
     return course
 

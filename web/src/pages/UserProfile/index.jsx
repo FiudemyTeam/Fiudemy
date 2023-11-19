@@ -5,31 +5,34 @@ import Box from "@mui/material/Box";
 import Copyright from "@components/Copyright";
 import UserInformation from "./components/UserInformation";
 import Courses from "./components/Courses";
-import { getSubscribedCourses, fetchFavCourses } from "./api";
+import { getSubscribedCourses, fetchFavCourses, getProgress } from "./api";
 
 const UserProfile = () => {
   const [startedCourses, setStartedCourses] = useState([]);
   const [favCourses, setFavCourses] = useState([]);
 
   useEffect(() => {
-    getSubscribedCourses()
-      .then((courses) => {
-        courses = courses.map((course) => {
-          const progress = 50;
+    const fetchData = async () => {
+      try {
+        const courses = await getSubscribedCourses();
+        const coursesWithProgress = await Promise.all(courses.map(async (course) => {
+          const progress = await getProgress(course.id);
           return { ...course, progress };
-        });
-        setStartedCourses(courses);
-      })
-      .catch((error) => {
+        }));
+        setStartedCourses(coursesWithProgress);
+      } catch (error) {
         console.error("Error al obtener los cursos!", error);
-      });
-    fetchFavCourses()
-      .then((courses) => {
+      }
+
+      try {
+        const courses = await fetchFavCourses();
         setFavCourses(courses);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Error al obtener los cursos!", error);
-      });
+      }
+    };
+
+    fetchData();
   }, []);
 
   return (
