@@ -40,14 +40,7 @@ export default function App() {
 
   return (
     <Container>
-      <Grid container spacing={2} justifyContent="flex-end">
-        <Grid item>
-          <Button variant="contained" color="primary" onClick={handleChange}>
-            Filtros
-          </Button>
-        </Grid>
-      </Grid>
-      <Collapse in={open}>
+
         <Grid container spacing={2} padding={3}>
           <Grid item xs={4}>
             <FormControl fullWidth>
@@ -118,7 +111,6 @@ export default function App() {
             </FormControl>
           </Grid>
         </Grid>
-      </Collapse>
     </Container>
   );
 }

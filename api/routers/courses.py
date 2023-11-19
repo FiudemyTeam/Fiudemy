@@ -36,8 +36,11 @@ async def get_courses(
         User.id == user.id)).label("is_favorite")
     is_subscribed_sub = select(Course.user_subscriptions.any(
         User.id == user.id)).label("is_subscribed")
-    avg_rate_sub = select([func.coalesce(func.round(func.avg(CourseUserRate.rate)), 0)]).where(CourseUserRate.course_id == Course.id).label("total_rate")
-    query = select(Course, is_favorite_sub, is_subscribed_sub, avg_rate_sub)
+    avg_rate_sub = select([func.coalesce(func.round(func.avg(CourseUserRate.rate)), 0)]).where(
+        CourseUserRate.course_id == Course.id).label("total_rate")
+    is_owner_sub = (Course.teacher_id == user.id).label("is_owner")
+    query = select(Course, is_favorite_sub, is_subscribed_sub,
+                   avg_rate_sub, is_owner_sub)
     filters = []
 
     if category:
@@ -56,7 +59,7 @@ async def get_courses(
     results = session.exec(query)
 
     courses = []
-    for course, is_favorite, is_subscribed, total_rate in results:
+    for course, is_favorite, is_subscribed, total_rate, is_owner in results:
         course = CourseRead.from_orm(course)
         course.is_favorite = is_favorite
         course.is_subscribed = is_subscribed
@@ -65,6 +68,7 @@ async def get_courses(
             .where(CourseUserSubscription.course_id == course.id)
         ).one()
         course.total_rate = total_rate
+        course.is_owner = is_owner
         courses.append(course)
 
     return courses
@@ -85,22 +89,31 @@ async def get_course(id: int,
 
     query = select(Course,
                    is_favorite_sub,
-                   is_subscribed_sub
-                   ).where(Course.id == id)
-    (course, is_favorite, is_subscribed) = session.exec(query).first()
+                   is_subscribed_sub,
+                   User.username,
+                   (Course.teacher_id == user.id).label("is_owner")
+                   ).join(User, Course.teacher_id == User.id
+                          ).where(Course.id == id)
+    (course, is_favorite, is_subscribed, username,
+     is_owner) = session.exec(query).first()
     if not course:
         raise HTTPException(status_code=404, detail="Course not found")
     course = CourseReadWithMaterials.from_orm(course)
     course.is_favorite = is_favorite
     course.is_subscribed = is_subscribed
     course.total_subscriptions = course_total_subscriptions
+    course.teacher_name = username
     course.course_materials.sort(key=lambda x: x.order, reverse=False)
+    course.is_owner = is_owner
 
     viewed_material_ids = session.exec(
         select(CourseMaterialView.material_id)
-        .where(CourseMaterialView.material_id.in_(
-            [material.id for material in course.course_materials]
-        ))
+        .where(
+            CourseMaterialView.material_id.in_(
+                [material.id for material in course.course_materials]
+            ),
+            CourseMaterialView.user_id == user.id
+        )
     ).all()
     for course_material in course.course_materials:
         if course_material.id in viewed_material_ids:
@@ -293,18 +306,22 @@ def subscribe_course(id: int,
         session.commit()
     return {"is_subscribed": True}
 
+
 @router.delete("/{id}/unsubscribe", response_model=CourseUserFavorite)
 def unsubscribe_course(id: int,
                        user: UserDependency,
                        session: Session = Depends(get_session)):
-    existing_sub = session.query(CourseUserSubscription).filter_by(user_id=user.id, course_id=id).first()
+    existing_sub = session.query(CourseUserSubscription).filter_by(
+        user_id=user.id, course_id=id).first()
     if existing_sub:
         session.delete(existing_sub)
         session.commit()
     else:
-        raise HTTPException(status_code=404, detail="Not subscribed to this course")
-    
+        raise HTTPException(
+            status_code=404, detail="Not subscribed to this course")
+
     return {"is_subscribed": False}
+
 
 @router.get("/subscribed/", response_model=List[CourseRead])
 def get_subscribed_courses(user: UserDependency, session: Session = Depends(get_session)):

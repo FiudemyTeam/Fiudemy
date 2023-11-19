@@ -24,7 +24,8 @@ class Course(CourseBase, table=True):
                                             link_model=CourseUserRate)
     user_favorites: List["User"] = Relationship(back_populates="course_favorites",
                                                 link_model=CourseUserFavorite)
-    course_materials: List["CourseMaterial"] = Relationship(back_populates="course")
+    course_materials: List["CourseMaterial"] = Relationship(
+        back_populates="course")
     user_subscriptions: List["User"] = Relationship(back_populates="course_subscriptions",
                                                     link_model=CourseUserSubscription)
     category_id: Optional[int] = Field(default=None)
@@ -42,6 +43,8 @@ class CourseRead(CourseBase):
     is_subscribed: Optional[bool]
     total_subscriptions: Optional[int]
     total_rate: Optional[int]
+    teacher_name: Optional[str]
+    is_owner: Optional[bool]
 
 
 class CourseReadWithMaterials(CourseRead):
