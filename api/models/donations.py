@@ -21,5 +21,6 @@ class DonationCreate(DonationBase):
 
 
 class DonationRead(DonationBase):
+    id: Optional[int] = None
     donor_id: Optional[int] = None
     donor_data: Optional[User] = None
