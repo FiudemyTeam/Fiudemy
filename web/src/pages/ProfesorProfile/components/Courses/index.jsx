@@ -1,49 +1,31 @@
+import React, { useState, useEffect } from "react";
+
 import { Link } from "react-router-dom";
 import {
-  Box,
-  Button,
   Container,
   Typography,
   Card,
   CardContent,
   CardMedia,
   CardActions,
+  Button,
   Grid,
+  LinearProgress,
 } from "@mui/material";
 
-const ProfesorProfile = () => {
-  // Ejemplo de datos del profesor
-  const profesorData = {
-    name: "Nombre del Profesor",
-    courses: [
-      {
-        id: 1,
-        name: "Curso 1",
-        description: "Descripción del Curso 1",
-        image: "URL de la imagen del Curso 1",
-        students: 25,
-      },
-      // Otros cursos del profesor
-    ],
-  };
+const CurrentCourses = ({ courses, showProgress = false, title = "" }) => {
+  if (courses.length === 0) {
+    return <> </>;
+  }
 
   return (
-    <Container>
-      <Box my={4}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Perfil del Profesor: {profesorData.name}
+    <Card style={{ marginTop: "20px" }}>
+      <CardContent>
+        <Typography variant="h5" sx={{ mb: 1 }}>
+          {title}
         </Typography>
-
-        {/* Botón para crear nuevos cursos */}
-        <Link to="/crear-curso" style={{ textDecoration: "none" }}>
-          <Button variant="contained" color="primary" style={{ marginBottom: "20px" }}>
-            Crear Nuevo Curso
-          </Button>
-        </Link>
-
-        {/* Lista de cursos del profesor */}
         <Grid container spacing={2}>
-          {profesorData.courses.map((course) => (
+          {courses.map((course) => (
             <Grid item key={course.id} xs={12} sm={6}>
               <Card
                 sx={{
@@ -74,16 +56,23 @@ const ProfesorProfile = () => {
                     <Button size="small">Ver</Button>
                   </Link>
                 </CardActions>
-                <div style={{ padding: "16px" }}>
-                  <Typography>Alumnos: {course.students}</Typography>
-                </div>
+                {showProgress && (
+                  <div style={{ padding: "16px" }}>
+                    <LinearProgress
+                      variant="determinate"
+                      value={course.progress}
+                      sx={{ mb: 1 }}
+                    />
+                    <Typography>Progreso: {course.progress}%</Typography>
+                  </div>
+                )}
               </Card>
             </Grid>
           ))}
         </Grid>
-      </Box>
-    </Container>
+      </CardContent>
+    </Card>
   );
 };
 
-export default ProfesorProfile;
+export default CurrentCourses;

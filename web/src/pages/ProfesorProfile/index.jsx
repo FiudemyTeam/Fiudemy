@@ -8,40 +8,27 @@ import Typography from "@mui/material/Typography";
 import Copyright from "@components/Copyright";
 import UserInformation from "../UserProfile/components/UserInformation";
 import Courses from "../UserProfile/components/Courses";
-import { getSubscribedCourses, fetchFavCourses } from "../UserProfile/api";
-import CourseCreation from "../CourseCreation";
+import { getCreatedCourses } from "./api"
 
-// Define el componente UserProfile
+
 const ProfesorProfile = () => {
-  // Estado para almacenar cursos iniciados y favoritos
-  const [startedCourses, setStartedCourses] = useState([]);
-  const [favCourses, setFavCourses] = useState([]);
+  
+  const [createdCourses, setCreatedCourses] = useState([]);
 
-  // Efecto para cargar datos cuando el componente se monta
+  const ownedCourses = createdCourses.filter((course) => course.is_owner);
+  
   useEffect(() => {
-    // Obtiene cursos iniciados
-    getSubscribedCourses()
-      .then((courses) => {
-        // Modifica los cursos para agregar progreso (50% en este caso)
-        courses = courses.map((course) => {
-          const progress = 50;
-          return { ...course, progress };
-        });
-        setStartedCourses(courses);
-      })
-      .catch((error) => {
-        console.error("Error al obtener los cursos:", error);
-      });
+    const fetchData = async () => {
+      try {
+        const courses = await getCreatedCourses();
+        setCreatedCourses(courses);
+      } catch (error) {
+        console.error("Error al obtener los cursos!", error);
+      }
+    };
 
-    // Obtiene cursos favoritos
-    fetchFavCourses()
-      .then((courses) => {
-        setFavCourses(courses);
-      })
-      .catch((error) => {
-        console.error("Error al obtener los cursos favoritos:", error);
-      });
-  }, []); // El segundo argumento [] indica que este efecto se ejecuta solo una vez al montar el componente
+    fetchData();
+  }, []);
 
   // Renderiza el componente
   return (
@@ -58,14 +45,12 @@ const ProfesorProfile = () => {
               Crear Nuevo Curso
             </Button>
           </Link>
+          <Courses
+            courses={ownedCourses}
+            title="Cursos creados"
+          />
         </Container>
-        <Container maxWidth="md" sx={{ marginTop: "20px"}}>
-          <Courses courses={startedCourses} showProgress={true} title="Cursos Empezados" />
-
-          {/* Muestra los cursos favoritos */}
-          <Courses courses={favCourses} title="Cursos Creados" />
-        </Container>
-      </main>
+     </main>
 
       {/* Componente de pie de página */}
       <Box
