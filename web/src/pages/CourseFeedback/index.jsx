@@ -82,7 +82,7 @@ const ReviewView = () => {
 
   return (
     <div>
-      <Container maxWidth="md" sx={{ marginTop: "20px" }}>
+      <Container maxWidth="md" sx={{ marginTop: "0px" }}>
         <Typography variant="h4" paddingY={2}>
           Opiniones de curso
         </Typography>

@@ -11,8 +11,8 @@ export default function Landpage() {
         <Box
           sx={{
             bgcolor: "background.paper",
-            pt: 8,
-            pb: 6,
+            pt: 0,
+            pb: 4,
           }}
         >
         <Container sx={{ py: 2 }} maxWidth="md">

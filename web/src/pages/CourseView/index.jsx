@@ -95,7 +95,7 @@ export default function CourseView({ data, handler }) {
           sx={{
             bgcolor: "background.paper",
             pt: 8,
-            pb: 6,
+            pb: 0,
           }}
         >
           <Container maxWidth="md">
