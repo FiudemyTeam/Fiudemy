@@ -4,6 +4,7 @@ from dependencies import UserDependency, get_session
 from fastapi import APIRouter, Depends, HTTPException
 from models.donations import DonationCreate, Donation
 from models.donations import DonationRead
+from models.users import User
 from sqlmodel import Session, select, and_
 
 router = APIRouter(
@@ -30,6 +31,11 @@ async def get_donations(
     for donation in donation_results:
         donation = DonationRead.from_orm(donation)
         donations.append(donation)
+
+        # FIXME: do this through the ORM
+        statement = select(User).where(User.id == donation.donor_id)
+        result = session.exec(statement)
+        donation.donor_data = result.first()
 
     return donations
 

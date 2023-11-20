@@ -2,6 +2,8 @@ from typing import Optional
 
 from sqlmodel import Field, SQLModel
 
+from models.users import User
+
 
 class DonationBase(SQLModel):
     teacher_id: Optional[int] = Field(default=None, foreign_key="user.id")
@@ -18,5 +20,6 @@ class DonationCreate(DonationBase):
     pass
 
 
-class DonationRead(Donation):
-    pass
+class DonationRead(DonationBase):
+    donor_id: Optional[int] = None
+    donor_data: Optional[User] = None

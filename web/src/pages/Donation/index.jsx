@@ -80,14 +80,15 @@ export default function Checkout() {
             ))}
           </Stepper>
           {activeStep === steps.length ? (
-            <React.Fragment>
-              <Typography variant="h5" gutterBottom>
-                Gracias por tu donacion!.
-              </Typography>
-              <Typography variant="subtitle1">
-                Los fondos donados de dirigiran directamente a la billetera del profesor a cargo del curso.
-              </Typography>
-            </React.Fragment>
+              <React.Fragment>
+                  {/*{sendDonation(activeStep)}*/}
+                  <Typography variant="h5" gutterBottom>
+                      Gracias por tu donacion!.
+                  </Typography>
+                  <Typography variant="subtitle1">
+                      Los fondos donados se enviarán directamente a la billetera del profesor a cargo del curso.
+                  </Typography>
+              </React.Fragment>
           ) : (
             <React.Fragment>
               {getStepContent(activeStep)}
