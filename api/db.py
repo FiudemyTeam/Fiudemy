@@ -196,6 +196,270 @@ def seed_db():
             type='video',
             value='https://www.youtube.com/watch?v=obpdQ4f7A0I',
             course_id=4
+        ),
+        CourseMaterial(
+            id=20,
+            title='Introducción a Machine Learning',
+            description='Definición de Machine Learning. Aplicaciones y conceptos fundamentales. Breve introducción a Python para Machine Learning.',
+            order=1,
+            type='video',
+            value='https://www.youtube.com/watch?v=qp-lQwmXZEU',
+            course_id=3
+        ),
+        CourseMaterial(
+            id=21,
+            title='Preprocesamiento de Datos en Machine Learning',
+            description='Importancia del preprocesamiento de datos. Limpieza y transformación de datos. Manejo de datos faltantes y outliers.',
+            order=2,
+            type='video',
+            value='https://www.youtube.com/watch?v=GOiEBALSxM0',
+            course_id=3
+        ),
+
+        CourseMaterial(
+            id=22,
+            title='Algoritmos de Machine Learning',
+            description='Revisión de algoritmos comunes. Regresión, clasificación y agrupación. Comparación de algoritmos y selección del modelo.',
+            order=3,
+            type='video',
+            value='https://www.youtube.com/watch?v=3CC4N4z3GJc',
+            course_id=3
+        ),
+
+        CourseMaterial(
+            id=23,
+            title='Evaluación y Validación de Modelos',
+            description='Métricas de evaluación de modelos. Validación cruzada. Interpretación de resultados y ajuste de parámetros.',
+            order=4,
+            type='video',
+            value='https://www.youtube.com/watch?v=sXYXTBKU4W0',
+            course_id=3
+        ),
+
+        CourseMaterial(
+            id=24,
+            title='Aplicaciones Prácticas de Machine Learning con Python',
+            description='Casos de uso reales. Desarrollo de proyectos con Python y scikit-learn. Implementación y despliegue de modelos.',
+            order=5,
+            type='video',
+            value='https://www.youtube.com/watch?v=aircAruvnKk',
+            course_id=3
+        ),
+        CourseMaterial(
+            id=25,
+            title='Introducción a la Programación en C++',
+            description='Conceptos básicos de C++. Estructuras de control y tipos de datos. Primeros programas en C++.',
+            order=1,
+            type='video',
+            value='https://www.youtube.com/watch?v=Rub-JsjMhWY',
+            course_id=5
+        ),
+
+        CourseMaterial(
+            id=26,
+            title='Programación Orientada a Objetos en C++',
+            description='Principios de la programación orientada a objetos. Clases y objetos en C++. Herencia y polimorfismo.',
+            order=2,
+            type='video',
+            value='https://www.youtube.com/watch?v=aEVH7oFoWnw',
+            course_id=5
+        ),
+
+        CourseMaterial(
+            id=27,
+            title='Estructuras de Datos en C++',
+            description='Conceptos avanzados de estructuras de datos. Vectores, listas y árboles en C++. Uso de STL.',
+            order=3,
+            type='video',
+            value='https://www.youtube.com/watch?v=ySZaUstgEH8',
+            course_id=5
+        ),
+
+        CourseMaterial(
+            id=28,
+            title='Programación de Aplicaciones en C++',
+            description='Desarrollo de aplicaciones con C++. Manipulación de archivos y entrada/salida. Creación de interfaces de usuario básicas.',
+            order=4,
+            type='video',
+            value='https://www.youtube.com/watch?v=16FI1-d2P4E',
+            course_id=5
+        ),
+
+        CourseMaterial(
+            id=29,
+            title='Optimización y Rendimiento en C++',
+            description='Técnicas para optimizar el rendimiento en C++. Uso eficiente de memoria. Herramientas de análisis de rendimiento.',
+            order=5,
+            type='video',
+            value='https://www.youtube.com/watch?v=16FI1-d2P4E',
+            course_id=5
+        ),
+        CourseMaterial(
+            id=30,
+            title='Introducción a la Cocina Gourmet',
+            description='Conceptos básicos de la cocina gourmet. Ingredientes y técnicas esenciales. Primeros pasos en la cocina de alta cocina.',
+            order=1,
+            type='video',
+            value='https://www.youtube.com/watch?v=pmYltlxwAWk',
+            course_id=6
+),
+
+        CourseMaterial(
+            id=31,
+            title='Técnicas Avanzadas de Cocción',
+            description='Dominio de técnicas avanzadas de cocción. Cocción sous-vide, reducciones y salsas complejas. Trucos de chefs profesionales.',
+            order=2,
+            type='video',
+            value='https://www.youtube.com/watch?v=PrHS2riy4L4',
+            course_id=6
+        ),
+
+        CourseMaterial(
+            id=32,
+            title='Creatividad en la Cocina Gourmet',
+            description='Desarrollo de la creatividad culinaria. Presentación de platos gourmet. Fusión de sabores y estilos.',
+            order=3,
+            type='video',
+            value='https://www.youtube.com/watch?v=XyrGQu9wg8k',
+            course_id=6
+        ),
+
+        CourseMaterial(
+            id=33,
+            title='Maridaje de Vinos y Comida Gourmet',
+            description='Principios del maridaje. Selección de vinos para acompañar platos gourmet. Degustación y apreciación de sabores.',
+            order=4,
+            type='video',
+            value='https://www.youtube.com/watch?v=7RxbfHQBso4',
+            course_id=6
+        ),
+
+        CourseMaterial(
+            id=34,
+            title='Creación de un Menú Gourmet Completo',
+            description='Planificación y ejecución de un menú gourmet completo. Coordinación de sabores y presentación de platos. Experiencia culinaria integral.',
+            order=5,
+            type='video',
+            value='https://www.youtube.com/watch?v=uGIr_V8KokE',
+            course_id=6
+        ),
+        CourseMaterial(
+            id=35,
+            title='Introducción al Desarrollo de Aplicaciones Móviles',
+            description='Conceptos básicos de desarrollo móvil. Plataformas y tecnologías. Primeros pasos en la creación de aplicaciones para dispositivos móviles.',
+            order=1,
+            type='video',
+            value='https://www.youtube.com/watch?v=RIKdJh8Un34',
+            course_id=7
+        ),
+
+        CourseMaterial(
+            id=36,
+            title='Desarrollo de Interfaces de Usuario (UI) para Móviles',
+            description='Diseño de interfaces efectivas para aplicaciones móviles. Principios de diseño de usuario. Herramientas y mejores prácticas.',
+            order=2,
+            type='video',
+            value='https://www.youtube.com/watch?v=hHdzat0xunE',
+            course_id=7
+        ),
+
+        CourseMaterial(
+            id=37,
+            title='Programación en Kotlin para Android',
+            description='Uso del lenguaje Kotlin en el desarrollo de aplicaciones Android. Estructuras de control, clases y funciones en Kotlin.',
+            order=3,
+            type='video',
+            value='https://www.youtube.com/watch?v=ebQphhLpJG0',
+            course_id=7
+        ),
+
+        CourseMaterial(
+            id=38,
+            title='Desarrollo de Aplicaciones iOS con Swift',
+            description='Creación de aplicaciones iOS utilizando el lenguaje Swift. Fundamentos de programación en Swift y desarrollo para dispositivos Apple.',
+            order=4,
+            type='video',
+            value='https://www.youtube.com/watch?v=BYHt44u3Uh8',
+            course_id=7
+        ),
+
+        CourseMaterial(
+            id=39,
+            title='Integración de Funcionalidades Avanzadas en Aplicaciones Móviles',
+            description='Incorporación de características avanzadas en aplicaciones móviles. Sensores, notificaciones y servicios en segundo plano.',
+            order=5,
+            type='video',
+            value='https://www.youtube.com/watch?v=2c9CmCts03k',
+            course_id=7
+        ),
+
+        CourseMaterial(
+            id=40,
+            title='Introducción a la Inversión en Bolsa',
+            description='Conceptos básicos de inversión en bolsa. Funcionamiento del mercado de valores. Tipos de activos y estrategias iniciales.',
+            order=1,
+            type='video',
+            value='https://www.youtube.com/watch?v=VFfdt2xHDxU',
+            course_id=8
+        ),
+
+        CourseMaterial(
+            id=41,
+            title='Análisis Fundamental y Técnico',
+            description='Métodos de análisis para la toma de decisiones en inversiones. Análisis fundamental y técnico. Evaluación de acciones y sectores.',
+            order=2,
+            type='video',
+            value='https://www.youtube.com/watch?v=dxVSFs9UmUc',
+            course_id=8
+        ),
+
+        CourseMaterial(
+            id=42,
+            title='Estrategias de Inversión y Gestión de Riesgos',
+            description='Desarrollo de estrategias de inversión. Diversificación de cartera. Gestión de riesgos y toma de decisiones informada.',
+            order=3,
+            type='video',
+            value='https://www.youtube.com/watch?v=emPkpHUEFHo',
+            course_id=8
+        ),
+        CourseMaterial(
+            id=43,
+            title='Introducción al Yoga y la Meditación',
+            description='Principios básicos del yoga y la meditación. Beneficios para la salud mental y física. Primeros pasos en la práctica diaria.',
+            order=1,
+            type='video',
+            value='https://www.youtube.com/watch?v=6p_yaNFSYao',
+            course_id=9
+),
+
+        CourseMaterial(
+            id=44,
+            title='Posturas y Secuencias de Yoga',
+            description='Aprendizaje de posturas fundamentales en yoga. Creación de secuencias de práctica. Flexibilidad y fortaleza física.',
+            order=2,
+            type='video',
+            value='https://www.youtube.com/watch?v=97sQsDSU3so',
+            course_id=9
+        ),
+
+        CourseMaterial(
+            id=45,
+            title='Técnicas de Respiración y Meditación Guiada',
+            description='Exploración de técnicas de respiración en yoga. Meditación guiada para la relajación y la atención plena. Calma mental.',
+            order=3,
+            type='video',
+            value='https://www.youtube.com/watch?v=UFJZfPHJgLc',
+            course_id=9
+        ),
+
+        CourseMaterial(
+            id=46,
+            title='Yoga Avanzado y Prácticas de Meditación Profunda',
+            description='Desarrollo de prácticas avanzadas de yoga. Meditación profunda y mindfulness. Incorporación de la práctica en la vida diaria.',
+            order=4,
+            type='video',
+            value='https://www.youtube.com/watch?v=ZcjQIAZHYq4',
+            course_id=9
         )
     ]
 
