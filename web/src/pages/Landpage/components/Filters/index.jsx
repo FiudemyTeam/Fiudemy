@@ -44,7 +44,7 @@ export default function App() {
         <Grid container spacing={2} padding={3}>
           <Grid item xs={4}>
             <FormControl fullWidth>
-              <InputLabel id="cat-label">Categoria</InputLabel>
+              <InputLabel id="cat-label">Categoría</InputLabel>
               <Select
                 value={category || ""}
                 onChange={(e) => setCategory(e.target.value)}
@@ -62,7 +62,7 @@ export default function App() {
           </Grid>
           <Grid item xs={4}>
             <FormControl fullWidth>
-              <InputLabel id="cat-rating">Calificacion</InputLabel>
+              <InputLabel id="cat-rating">Calificación</InputLabel>
               <Select
                 value={rate || ""}
                 onChange={(e) => setRate(e.target.value)}
