@@ -1,13 +1,14 @@
 from datetime import datetime
+
 from sqlmodel import SQLModel, create_engine, Session
 
-from models.course_material_views import CourseMaterialView
-from models.courses import Course, Category
-from models.users import User
-from models.course_rates import CourseUserRate
+from auth import auth_handler
 from models.course_favorites import CourseUserFavorite
 from models.course_materials import CourseMaterial
-from auth import auth_handler
+from models.course_rates import CourseUserRate
+from models.courses import Course, Category
+from models.donations import Donation
+from models.users import User
 
 sqlite_file_name = "database.db"
 sqlite_url = f"sqlite:///{sqlite_file_name}"
@@ -645,6 +646,12 @@ def seed_db():
         Category(id=5, name="Otras"),
     ]
 
+    donations = [
+        Donation(id=1, donor_id=2, teacher_id=1, amount=1000, message="Thanks for the course!"),
+        Donation(id=2, donor_id=1, teacher_id=2, amount=10000, message="Amazing content!"),
+        Donation(id=3, donor_id=3, teacher_id=1, amount=50000, message="You changed my life!"),
+    ]
+
     with Session(engine) as session:
 
         for course in courses:
@@ -667,5 +674,8 @@ def seed_db():
 
         for course_material_view in course_material_views:
             session.add(course_material_view)
+
+        for donation in donations:
+            session.add(donation)
 
         session.commit()

@@ -43,8 +43,8 @@ class UserInput(SQLModel):
 
 
 class UserLogin(SQLModel):
-    username: str = "default_username"
-    password: str = "default_password"
+    username: str = "john_doe"
+    password: str = "password"
 
 
 class UserUpdate(SQLModel):

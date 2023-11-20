@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-from routers import courses, users
+from routers import courses, users, donations
 from db import create_db_and_tables, drop_db_and_tables, seed_db
 
 from dependencies import get_current_user
@@ -36,6 +36,7 @@ app.add_middleware(
 
 app.include_router(courses.router, dependencies=[Depends(get_current_user)])
 app.include_router(users.user_router)
+app.include_router(donations.router, dependencies=[Depends(get_current_user)])
 
 
 @app.get("/")
