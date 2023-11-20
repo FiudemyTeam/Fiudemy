@@ -367,3 +367,10 @@ async def get_course_certificate(id: int,
     data = open(tmp_certificate_file, "rb").read()
 
     return Response(content=data, media_type="image/png")
+
+@router.get("/created/", response_model=List[CourseRead])
+def get_created_courses(user: UserDependency, session: Session = Depends(get_session)):
+    query = select(Course).where(Course.teacher_id == user.id)
+    courses = session.exec(query).all()
+
+    return [CourseRead.from_orm(course) for course in courses]

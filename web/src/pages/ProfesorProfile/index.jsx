@@ -1,4 +1,3 @@
-// Importa las dependencias necesarias
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom"; // Importa Link desde react-router-dom
 import Container from "@mui/material/Container";
@@ -8,38 +7,27 @@ import Typography from "@mui/material/Typography";
 import Copyright from "@components/Copyright";
 import UserInformation from "../UserProfile/components/UserInformation";
 import Courses from "../UserProfile/components/Courses";
-import { getSubscribedCourses, fetchFavCourses } from "../UserProfile/api";
+import { getCreatedCourses } from "../ProfesorProfile/api";
 import CourseCreation from "../CourseCreation";
 
 // Define el componente UserProfile
 const ProfesorProfile = () => {
   // Estado para almacenar cursos iniciados y favoritos
-  const [startedCourses, setStartedCourses] = useState([]);
-  const [favCourses, setFavCourses] = useState([]);
+  const [createdCourses, setCreatedCourses] = useState([]);
 
   // Efecto para cargar datos cuando el componente se monta
   useEffect(() => {
-    // Obtiene cursos iniciados
-    getSubscribedCourses()
+    // Obtiene cursos creados
+    getCreatedCourses()
       .then((courses) => {
-        // Modifica los cursos para agregar progreso (50% en este caso)
         courses = courses.map((course) => {
-          const progress = 50;
-          return { ...course, progress };
+          const enrollment_count = 50;
+          return { ...course, enrollment_count };
         });
-        setStartedCourses(courses);
+        setCreatedCourses(courses);
       })
       .catch((error) => {
         console.error("Error al obtener los cursos:", error);
-      });
-
-    // Obtiene cursos favoritos
-    fetchFavCourses()
-      .then((courses) => {
-        setFavCourses(courses);
-      })
-      .catch((error) => {
-        console.error("Error al obtener los cursos favoritos:", error);
       });
   }, []); // El segundo argumento [] indica que este efecto se ejecuta solo una vez al montar el componente
 
@@ -60,10 +48,9 @@ const ProfesorProfile = () => {
           </Link>
         </Container>
         <Container maxWidth="md" sx={{ marginTop: "20px"}}>
-          <Courses courses={startedCourses} showProgress={true} title="Cursos Empezados" />
+          <Courses courses={createdCourses}  title="Cursos Creados" />
 
-          {/* Muestra los cursos favoritos */}
-          <Courses courses={favCourses} title="Cursos Creados" />
+
         </Container>
       </main>
 
@@ -77,6 +64,6 @@ const ProfesorProfile = () => {
     </div>
   );
 };
-
 // Exporta el componente UserProfile
 export default ProfesorProfile;
+
