@@ -14,6 +14,9 @@ import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import MiImagen from "@assets/fiudemy.png";
 import Copyright from "@components/Copyright";
+import IconButton from "@mui/material/IconButton";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import axios from "axios";
 
 // TODO remove, this demo shouldn't need to reset the theme.
@@ -23,6 +26,11 @@ const defaultTheme = createTheme();
 
 export default function SignInSide() {
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -89,7 +97,7 @@ export default function SignInSide() {
                 {error}
               </Typography>
             )}
-            <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+            <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, position: 'relative' }}>
               <TextField
                 margin="normal"
                 required
@@ -109,13 +117,19 @@ export default function SignInSide() {
                     },
                 }}
               />
+              <IconButton
+                onClick={handleTogglePasswordVisibility}
+                sx={{ position: "absolute", right: 0, top: "50%", transform: "translateY(-50%)" }}
+              >
+                {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+              </IconButton>
               <TextField
                 margin="normal"
                 required
                 fullWidth
                 name="password"
                 label="Password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 id="password"
                 autoComplete="current-password"
                 sx={{
@@ -144,7 +158,7 @@ export default function SignInSide() {
                 variant="contained"
                 sx={{ mt: 3, mb: 2, background: "black" }}
               >
-                Sign In
+                Sign In/
               </Button>
               <Grid container>
                 <Grid item xs>
