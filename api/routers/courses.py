@@ -3,6 +3,7 @@ from typing import List, Optional
 
 from dependencies import UserDependency, get_session
 from fastapi import APIRouter, HTTPException, Response, Depends
+from models.course_certificate import CourseCertificate
 from models.course_material_views import CourseMaterialView
 from models.course_materials import CourseMaterial, CourseMaterialCreate
 from models.course_subscriptions import CourseUserSubscription
@@ -11,10 +12,8 @@ from models.courses import (
     CourseUserFavorite, Category, CourseReadWithMaterials
 )
 from models.users import User
-from sqlmodel import Session, select, and_
 from sqlalchemy import func
-
-from models.course_certificate import CourseCertificate
+from sqlmodel import Session, select, and_
 
 router = APIRouter(
     prefix="/courses",
@@ -60,7 +59,7 @@ async def get_courses(
     results = session.exec(query)
 
     courses = []
-    for course, is_favorite, is_subscribed, total_rate, is_owner in results:        
+    for course, is_favorite, is_subscribed, total_rate, is_owner in results:
         course = CourseRead.from_orm(course)
         course.is_favorite = is_favorite
         course.is_subscribed = is_subscribed
@@ -124,8 +123,7 @@ async def get_course(id: int,
             course_material.viewed = False
 
     total_materials = len(session.exec(select(CourseMaterial).where(CourseMaterial.course_id == course.id)).all())
-    course.progress = (len(viewed_material_ids) / total_materials) * 100 if total_materials !=0 else 0
-
+    course.progress = (len(viewed_material_ids) / total_materials) * 100 if total_materials != 0 else 0
 
     return course
 
@@ -367,10 +365,3 @@ async def get_course_certificate(id: int,
     data = open(tmp_certificate_file, "rb").read()
 
     return Response(content=data, media_type="image/png")
-
-@router.get("/created/", response_model=List[CourseRead])
-def get_created_courses(user: UserDependency, session: Session = Depends(get_session)):
-    query = select(Course).where(Course.teacher_id == user.id)
-    courses = session.exec(query).all()
-
-    return [CourseRead.from_orm(course) for course in courses]

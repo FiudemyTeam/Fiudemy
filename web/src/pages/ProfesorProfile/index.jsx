@@ -17,7 +17,7 @@ const ProfesorProfile = () => {
 
   // Efecto para cargar datos cuando el componente se monta
   useEffect(() => {
-    // Obtiene cursos creados
+    // Obtiene cursos creados por el usuario actual
     getCreatedCourses()
       .then((courses) => {
         courses = courses.map((course) => {
