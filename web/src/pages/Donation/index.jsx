@@ -3,7 +3,6 @@ import CssBaseline from '@mui/material/CssBaseline';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import Toolbar from '@mui/material/Toolbar';
 import Paper from '@mui/material/Paper';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
@@ -14,6 +13,10 @@ import Typography from '@mui/material/Typography';
 import AddressForm from '../Donation/AddresForm';
 import PaymentForm from '../Donation/PaymentForm';
 import Review from '../Donation/Review';
+import { useParams } from "react-router-dom";
+import axios from 'axios'; 
+
+const API_HOST = import.meta.env.VITE_API_HOST;
 
 function Copyright() {
   return (
@@ -44,9 +47,34 @@ function getStepContent(step) {
 }
 
 export default function Checkout() {
+  const { teacherId } = useParams();
+
+  let donationData = {
+    teacher_id: teacherId,
+    amount: 10,
+    message: "Msg",
+  }
+
   const [activeStep, setActiveStep] = React.useState(0);
 
-  const handleNext = () => {
+  const handleNext = async () => {
+    if (activeStep == 2) {
+      console.log("DONAR")
+      try {
+        await axios.post(
+          `${API_HOST}/donations/`,
+          donationData,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+      } catch (error) {
+        console.error('Error making donation:', error);
+      }  
+    }
     setActiveStep(activeStep + 1);
   };
 

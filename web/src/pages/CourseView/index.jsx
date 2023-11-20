@@ -236,7 +236,7 @@ export default function CourseView({ data, handler }) {
                 <Button variant="contained">
                   Inscribirse a la certificación
                 </Button>
-                <Link to="/donation" style={{ textDecoration: "none" }}>
+                <Link to={`/donation/${data?.teacher_id}`} style={{ textDecoration: "none" }}>
                   <Button variant="contained">Hacer una donacion</Button>
                 </Link>
               </Stack>

@@ -41,7 +41,7 @@ const Router = () => {
         element={<WithHeader component={<ProfesorProfile />} />}
       ></Route>
       <Route
-        path="/donation"
+        path="/donation/:teacherId"
         element={<WithHeader component={<Donation />} />}
       ></Route>
       <Route
