@@ -26,5 +26,9 @@ class CourseMaterialCreate(CourseMaterialBase):
     pass
 
 
+class CourseMaterialUpdate(CourseMaterialBase):
+    id: Optional[int] = None
+
+
 class CourseMaterialRead(CourseMaterial):
     viewed: Optional[bool] = None
