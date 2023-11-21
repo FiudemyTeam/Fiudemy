@@ -365,3 +365,23 @@ async def get_course_certificate(id: int,
     data = open(tmp_certificate_file, "rb").read()
 
     return Response(content=data, media_type="image/png")
+
+@router.patch('/{id}', response_model=CourseReadWithMaterials)
+def patch_course(course:  CourseReadWithMaterials,
+                user: UserDependency,
+                session: Session = Depends(get_session)):
+    
+    query = select(Course).where(Course.id == id, Course.teacher_id == user.id)
+    existing_course = session.exec(query).first()
+    if existing_course is None:
+        raise HTTPException(status_code=404, detail="Curso no encontrado")
+
+    # Actualizar los campos del curso con la nueva información
+    for key, value in course.dict(exclude_unset=True).items():
+        setattr(existing_course, key, value)
+
+    # Guardar los cambios en la base de datos
+    session.commit()
+    session.refresh(existing_course)
+
+    return existing_course
