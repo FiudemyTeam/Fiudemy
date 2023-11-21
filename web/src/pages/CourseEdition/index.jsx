@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
-import AppBar from '@mui/material/AppBar';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
@@ -16,17 +15,17 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import Divider from '@mui/material/Divider';
 import { updateCourseInformation } from '@pages/CourseEdition/api';
 
 const defaultTheme = createTheme();
 
 const EditCourseView = () => {
   const { courseId } = useParams();
-  console.log("CourseId",courseId);
+  console.log("CourseId", courseId);
   const API_HOST = import.meta.env.VITE_API_HOST;
   const [courseDetails, setCourseDetails] = useState(null);
   const [successMessage, setSuccessMessage] = useState(false);
-  const [isEditing, setIsEditing] = useState(true); 
 
   useEffect(() => {
     const fetchCourseDetails = async () => {
@@ -37,35 +36,10 @@ const EditCourseView = () => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-  
-        // Copiar toda la información de courseDetails a courseData al cargar la página
-        setCourseData({
-          name: response.data.name || '',
-          description: response.data.description || '',
-          image: response.data.image || '',
-          id: response.data.id,
-          is_favorite: response.data.is_favourite,
-          teacher_id: response.data.teacher_id,
-          is_subscribed: response.data.is_subscribed,
-          total_subscriptions: response.data.total_subscriptions,
-          total_rate: response.data.total_rate,
-          teacher_name: response.data.teacher_name,
-          is_owner: response.data.is_owner,
-          progress: response.data.progress,
-          course_materials: response.data.course_materials.map((material) => ({
-            title: material.title || '',
-            description: material.description || '',
-            type: material.type || '',
-            value: material.value || '',
-            id: material.id,
-            course_id: material.course_id,
-            viewed: material.viewed,
-            order: material.order,
-          })),
-        });
-  
+
         setCourseDetails(response.data);
-        console.log("COURSE DETAILS",courseDetails);
+
+        console.log("COURSE DETAILS", courseDetails);
       } catch (error) {
         console.error('Error fetching course details:', error);
       }
@@ -73,85 +47,59 @@ const EditCourseView = () => {
 
     fetchCourseDetails();
   }, [API_HOST, courseId]);
-  
 
-  const [courseData, setCourseData] = useState({
-    title: courseDetails?.name || '',
-    description: courseDetails?.description || '',
-    image: courseDetails?.image || '',
-    course_materials: [], 
-  });
-  console.log("COURSE DATA",courseData);
-  console.log("COURSE Details",courseDetails);
-
-  useEffect(() => {
-    if (courseDetails) {
-      setCourseData({
-        name: courseDetails.name || '',
-        description: courseDetails.description || '',
-        image: courseDetails.image || '',
-        id: courseDetails.id,
-        is_favorite: courseDetails.is_favourite,
-        teacher_id: courseDetails.teacher_id,
-        is_subscribed: courseDetails.is_subscribed,
-        total_subscriptions: courseDetails.total_subscriptions,
-        total_rate: courseDetails.total_rate,
-        teacher_name: courseDetails.teacher_name,
-        is_owner: courseDetails.is_owner,
-        progress: courseDetails.progress,
-        course_materials: courseDetails.course_materials.map((material) => ({
-          title: material.title || '',
-          description: material.description || '',
-          type: material.type || '',
-          value: material.value || '',
-          id: material.id,
-          course_id: material.course_id,
-          viewed: material.viewed,
-          order: material.order,
-        })),
-      });
-    }
-  }, [courseDetails]);
 
   const addModule = () => {
-    setCourseData({
-      ...courseData,
-      course_materials: [...courseData.course_materials, { title: '', description: '', type: '', value: '' }],
+    const materialIndex = courseDetails.course_materials.length + 1;
+    setCourseDetails({
+      ...courseDetails,
+      course_materials: [
+        ...courseDetails.course_materials,
+        { title: `Módulo ${materialIndex}`, description: `Descripción del módulo ${materialIndex}`, type: '', value: '', order: materialIndex }
+      ],
     });
+  };
+
+  const deleteModule = (materialIdx) => {
+    const course_materials = courseDetails.course_materials.filter((_, idx) => idx !== materialIdx);
+    setCourseDetails({ ...courseDetails, course_materials });
   };
 
   const handleCloseSnackbar = () => {
     setSuccessMessage(false);
   };
 
-  const handleChange = (event, index) => {
+  const handleChange = (event, materialIdx = null) => {
     const { name, value } = event.target;
-    if (name === 'name' || name === 'description' || name === 'image') {
-      setCourseData({ ...courseData, [name]: value });
+    if (materialIdx === null) {
+      setCourseDetails({ ...courseDetails, [name]: value });
     } else {
-      const course_materials = [...courseData.course_materials];
-      course_materials[index][name] = value;
-      setCourseData({ ...courseData, course_materials });
+      const course_materials = courseDetails.course_materials.map((material, idx) => {
+        if (idx === materialIdx) {
+          return { ...material, [name]: value };
+        } else {
+          return material;
+        }
+      });
+      setCourseDetails({ ...courseDetails, course_materials });
     }
   };
-  
-  
+
+
   const handleSubmit = async () => {
-    console.log('Course data to update:', courseData);
-    updateCourseInformation(courseId, courseData)
-    .then(() => {
-        setIsEditing(false);
-      })
+    console.log('Course data to update:', courseDetails);
+    const { success } = await updateCourseInformation(courseId, courseDetails)
       .catch((error) => {
         console.error("Error al actualizar la información del curso!", error);
       });
-      };
-    
+    setSuccessMessage(success);
+  };
+
 
   return (
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
-      <Container sx={{ marginTop: "20px" }}>
+      <Container sx={{ marginTop: "3em", marginBottom: "3em" }}>
         <Paper elevation={3} style={{ padding: "20px" }}>
           <Typography variant="h4" style={{ marginBottom: "10px" }}>
             Editar mi curso
@@ -161,17 +109,17 @@ const EditCourseView = () => {
             label="Título del curso"
             variant="outlined"
             fullWidth
-            value={courseData.name || courseDetails?.name || ''}
+            value={courseDetails?.name || ''}
             onChange={(e) => handleChange(e)}
             style={{ marginBottom: "10px" }}
-            />
+          />
 
           <TextField
             name="image"
             label="Imagen de portada del curso"
             variant="outlined"
             fullWidth
-            value={courseData.image || courseDetails?.image || ''}
+            value={courseDetails?.image || ''}
             onChange={(e) => handleChange(e)}
             style={{ marginBottom: "10px" }}
           />
@@ -180,73 +128,76 @@ const EditCourseView = () => {
             label="Descripción del curso"
             variant="outlined"
             fullWidth
-            value={courseData.description || courseDetails?.description || ''}
+            value={courseDetails?.description || ''}
             onChange={(e) => handleChange(e)}
             style={{ marginBottom: "20px" }}
           />
-          {courseData.course_materials.map((material, index) => (
-            <div key={index}>
-              <TextField
-                name="title"
-                label={`Título del Módulo ${index + 1}`}
-                variant="outlined"
-                fullWidth
-                value={material.title}
-                onChange={(e) => handleChange(e, index)}
-                style={{ marginBottom: "10px" }}
-              />
-              <TextField
-                name="description"
-                label={`Descripción del Módulo ${index + 1}`}
-                variant="outlined"
-                fullWidth
-                value={material.description}
-                onChange={(e) => handleChange(e, index)}
-                style={{ marginBottom: "10px" }}
-              />
-              <Select
-                name="type"
-                label={`Tipo de contenido del Módulo ${index + 1}`}
-                variant="outlined"
-                fullWidth
-                value={material.type}
-                onChange={(e) => handleChange(e, index)}
-                style={{ marginBottom: "20px" }}
-                displayEmpty
-              >
-                <MenuItem value="" disabled>
-                  Tipo de Contenido
-                </MenuItem>
-                <MenuItem value="video">Video</MenuItem>
-                <MenuItem value="imagen">Imagen</MenuItem>
-                <MenuItem value="bibliografia">Bibliografía</MenuItem>
-              </Select>
-              <TextField
-                name="value"
-                label={`Contenido del Módulo ${index + 1}`}
-                variant="outlined"
-                fullWidth
-                value={material.value}
-                onChange={(e) => handleChange(e, index)}
-                style={{ marginBottom: "20px" }}
-              />
-              <IconButton onClick={() => deleteModule(index)} color="error">
-                <DeleteIcon />
-              </IconButton>
-            </div>
+          {courseDetails?.course_materials.map((material, index) => (
+            <>
+              <Divider style={{ marginBottom: "2em" }} />
+              <div key={index} style={{ marginBottom: "2em" }}>
+                <TextField
+                  name="title"
+                  label={`Título del Módulo ${index + 1}`}
+                  variant="outlined"
+                  fullWidth
+                  value={material.title}
+                  onChange={(e) => handleChange(e, index)}
+                  style={{ marginBottom: "10px" }}
+                />
+                <TextField
+                  name="description"
+                  label={`Descripción del Módulo ${index + 1}`}
+                  variant="outlined"
+                  fullWidth
+                  value={material.description}
+                  onChange={(e) => handleChange(e, index)}
+                  style={{ marginBottom: "10px" }}
+                />
+                <Select
+                  name="type"
+                  label={`Tipo de contenido del Módulo ${index + 1}`}
+                  variant="outlined"
+                  fullWidth
+                  value={material.type}
+                  onChange={(e) => handleChange(e, index)}
+                  style={{ marginBottom: "20px" }}
+                  displayEmpty
+                >
+                  <MenuItem value="" disabled>
+                    Tipo de Contenido
+                  </MenuItem>
+                  <MenuItem value="video">Video</MenuItem>
+                  <MenuItem value="imagen">Imagen</MenuItem>
+                  <MenuItem value="bibliografia">Bibliografía</MenuItem>
+                </Select>
+                <TextField
+                  name="value"
+                  label={`Contenido del Módulo ${index + 1}`}
+                  variant="outlined"
+                  fullWidth
+                  value={material.value}
+                  onChange={(e) => handleChange(e, index)}
+                  style={{ marginBottom: "20px" }}
+                />
+                <Button variant="contained" color="error" onClick={() => deleteModule(index)}>
+                  <DeleteIcon /> Eliminar Módulo
+                </Button>
+              </div>
+            </>
           ))}
           <Box display="flex" justifyContent="space-between">
             <Button variant="outlined" onClick={addModule}>
               Agregar Módulo
             </Button>
-              <Link to={`/course/${courseId}`} style={{ textDecoration: 'none' }}>
-                <Button variant="contained" color="primary" onClick={handleSubmit}>
-                  Guardar
-                </Button>
-              </Link>
+            <Link to={`/course/${courseId}`} style={{ textDecoration: 'none' }}>
+              <Button variant="contained" color="primary" onClick={handleSubmit}>
+                Guardar
+              </Button>
+            </Link>
 
           </Box>
-        </Paper>
+        </Paper >
       </Container>
       <Snackbar
         open={successMessage}
@@ -273,7 +224,7 @@ const EditCourseView = () => {
           Continua aprendiendo con nosotros!
         </Typography>
       </Box>
-    </ThemeProvider>
+    </ThemeProvider >
   );
 };
 
