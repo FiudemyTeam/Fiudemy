@@ -22,14 +22,11 @@ const defaultTheme = createTheme();
 
 const EditCourseView = () => {
   const { courseId } = useParams();
-  console.log("recibe por param",courseId);
-//  const { courseId } = 10//course.id;
+  console.log("CourseId",courseId);
   const API_HOST = import.meta.env.VITE_API_HOST;
   const [courseDetails, setCourseDetails] = useState(null);
-//  const [courseData, setCourseData] = useState(null);
   const [successMessage, setSuccessMessage] = useState(false);
   const [isEditing, setIsEditing] = useState(true); 
-//  const {courseTitle, courseImage, courseDescription, course_materials } =
 
   useEffect(() => {
     const fetchCourseDetails = async () => {
@@ -69,7 +66,6 @@ const EditCourseView = () => {
   
         setCourseDetails(response.data);
         console.log("COURSE DETAILS",courseDetails);
-        console.log("COURSE DETAILS2",response.data);
       } catch (error) {
         console.error('Error fetching course details:', error);
       }
@@ -78,17 +74,16 @@ const EditCourseView = () => {
     fetchCourseDetails();
   }, [API_HOST, courseId]);
   
-  
+
   const [courseData, setCourseData] = useState({
     title: courseDetails?.name || '',
     description: courseDetails?.description || '',
     image: courseDetails?.image || '',
-    course_materials: [], // Inicializamos los módulos como un arreglo vacío
+    course_materials: [], 
   });
-  console.log("COURSE DATA ES",courseData);
-  console.log("COURSE Details ES",courseDetails);
+  console.log("COURSE DATA",courseData);
+  console.log("COURSE Details",courseDetails);
 
-  // Copiar la información de los módulos de courseDetails a courseData al cargar la página
   useEffect(() => {
     if (courseDetails) {
       setCourseData({

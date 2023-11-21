@@ -366,10 +366,11 @@ async def get_course_certificate(id: int,
 
     return Response(content=data, media_type="image/png")
 
-@router.patch('/{id}', response_model=CourseReadWithMaterials)
-def patch_course(course:  CourseReadWithMaterials,
+@router.patch('/{id}', response_model=CourseRead)
+def patch_course(id: int, course:  CourseReadWithMaterials,
                 user: UserDependency,
                 session: Session = Depends(get_session)):
+    
     
     query = select(Course).where(Course.id == id, Course.teacher_id == user.id)
     existing_course = session.exec(query).first()
@@ -380,8 +381,23 @@ def patch_course(course:  CourseReadWithMaterials,
     for key, value in course.dict(exclude_unset=True).items():
         setattr(existing_course, key, value)
 
-    # Guardar los cambios en la base de datos
+    if len(course.course_materials)!=0:
+        # Actualizar los materiales del curso
+        for material_data in course.course_materials:
+                # Verificar si el material ya existe en la base de datos
+                existing_material = (
+                    session.query(CourseMaterial)
+                    .filter(CourseMaterial.course_id == id, CourseMaterial.id == material_data.id)
+                    .first()
+                )
+                if existing_material:
+                    # Actualizar el material existente
+                    for material_key, material_value in material_data.dict(exclude_unset=True).items():
+                        setattr(existing_material, material_key, material_value)
+
     session.commit()
     session.refresh(existing_course)
+    if existing_material: 
+        session.refresh(existing_material)
 
-    return existing_course
+    return CourseRead.from_orm(existing_course)
