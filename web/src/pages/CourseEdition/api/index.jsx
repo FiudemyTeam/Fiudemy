@@ -6,9 +6,9 @@ const API_HOST = import.meta.env.VITE_API_HOST;
 export const updateCourseInformation = async (courseId, courseData) => {
    console.log("Información para actualizar", courseData);
    try {
-      await axios.patch(
+      await axios.put(
          `${API_HOST}/courses/${courseId}`,
-            courseData,
+         courseData,
          {
             headers: {
                'Content-Type': 'application/json',
@@ -17,10 +17,9 @@ export const updateCourseInformation = async (courseId, courseData) => {
          }
       );
 
-      console.log('Course edited successfully:', response.data);    
-                        
-      setSuccessMessage(true); // Activa el mensaje de éxito
+      return { success: true };
    } catch (error) {
       console.error('Error editing course or adding material:', error);
+      return { success: false };
    }
-    };
+};
