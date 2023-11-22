@@ -14,6 +14,7 @@ from models.courses import (
 from models.users import User
 from sqlalchemy import func
 from sqlmodel import Session, select, and_
+import segno
 
 router = APIRouter(
     prefix="/courses",
@@ -122,8 +123,10 @@ async def get_course(id: int,
         else:
             course_material.viewed = False
 
-    total_materials = len(session.exec(select(CourseMaterial).where(CourseMaterial.course_id == course.id)).all())
-    course.progress = (len(viewed_material_ids) / total_materials) * 100 if total_materials != 0 else 0
+    total_materials = len(session.exec(select(CourseMaterial).where(
+        CourseMaterial.course_id == course.id)).all())
+    course.progress = (len(viewed_material_ids) /
+                       total_materials) * 100 if total_materials != 0 else 0
 
     return course
 
