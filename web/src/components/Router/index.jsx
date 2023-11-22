@@ -10,8 +10,8 @@ import CourseCreation from "@pages/CourseCreation";
 import { SearchContextProvider } from "@context/SearchContext";
 import { CourseContextProvider } from "@context/CourseContext";
 import Donation from "@pages/Donation";
+import CourseCertification from "@pages/CourseCertification";
 import EditCourseView from "@pages/CourseEdition";
-
 
 const WithHeader = ({ component }) => (
   <>
@@ -57,6 +57,10 @@ const Router = () => {
             <WithHeader component={<CourseDetail />} />
           </CourseContextProvider>
         }
+      ></Route>
+      <Route
+        path="/certificate/:id"
+        element={<WithHeader component={<CourseCertification />} />}
       ></Route>
       <Route path="/edit-course/:courseId" element={<EditCourseView />} />       
       <Route path="*" element={<PageNotFound />} />

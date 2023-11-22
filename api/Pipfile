@@ -23,6 +23,7 @@ pyjwt = "*"
 bcrypt = "*"
 passlib = "*"
 pydantic = {extras = ["email"], version = "*"}
+segno = "*"
 
 [dev-packages]
 
