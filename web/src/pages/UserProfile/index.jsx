@@ -43,12 +43,19 @@ const UserProfile = () => {
             Perfil del Usuario
           </Typography>
           <UserInformation />
+        </Container>
+        <Container maxWidth="md" sx={{ marginTop: "20px" }}>
           <Courses
             courses={startedCourses}
             showProgress={true}
             title="Cursos Empezados"
           />
-          <Courses courses={favCourses} title="Cursos Favoritos" />
+        </Container>
+        <Container maxWidth="md" sx={{ marginTop: "20px" }}>
+          <Courses
+            maxWidth="md"
+            courses={favCourses}
+            title="Cursos Favoritos" />
         </Container>
       </main>
       <Box

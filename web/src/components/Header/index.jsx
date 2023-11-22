@@ -3,7 +3,6 @@ import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 import { Link } from "react-router-dom";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import SearchBar from "./components/SearchBar";
 import LogoutButton from "./components/LogoutButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChalkboardTeacher, faUserGraduate } from "@fortawesome/free-solid-svg-icons";
@@ -32,13 +31,12 @@ const Header = () => {
           </Typography>
         </Link>
         <div style={{ flexGrow: 1 }} />
-        <SearchBar />
         <Link
           to="/profesor"
           style={{ textDecoration: "none", color: "white", marginRight: 20 }}
           title="Perfil Profesor"
         >
-          <FontAwesomeIcon icon={faChalkboardTeacher} size="lg"/>
+          <FontAwesomeIcon icon={faChalkboardTeacher} size="lg" />
         </Link>
         <div style={{ display: "flex", alignItems: "center" }}>
           <Link
@@ -46,7 +44,7 @@ const Header = () => {
             style={{ textDecoration: "none", color: "white", marginRight: 20 }}
             title="Perfil Alumno"
           >
-            <FontAwesomeIcon icon={faUserGraduate} size="lg"/>
+            <FontAwesomeIcon icon={faUserGraduate} size="lg" />
           </Link>
           <LogoutButton />
         </div>

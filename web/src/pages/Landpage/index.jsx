@@ -15,10 +15,7 @@ export default function Landpage() {
             pb: 4,
           }}
         >
-        <Container sx={{ py: 2 }} maxWidth="md">
-          <CoursesFilters />
-        </Container>
-          <Container maxWidth="sm">
+          <Container maxWidth="sm" sx={{ paddingTop: "2em" }}>
             <Typography
               component="h1"
               variant="h2"
@@ -42,6 +39,9 @@ export default function Landpage() {
               Elige entre más de 210.000 cursos de vídeo en línea con nuevo
               contenido cada mes
             </Typography>
+          </Container>
+          <Container sx={{ py: 2 }} maxWidth="md">
+            <CoursesFilters />
           </Container>
         </Box>
         <Container sx={{ py: 2 }} maxWidth="md">

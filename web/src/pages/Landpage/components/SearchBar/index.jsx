@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { styled, alpha } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
@@ -7,9 +7,9 @@ import { SearchContext } from "@context/SearchContext";
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  backgroundColor: alpha(theme.palette.common.black, 0.02),
   "&:hover": {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
+    backgroundColor: alpha(theme.palette.common.black, 0.05),
   },
   marginRight: theme.spacing(2),
   marginLeft: 0,
@@ -32,6 +32,7 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: "inherit",
+  width: "100%",
   "& .MuiInputBase-input": {
     padding: theme.spacing(1, 1, 1, 0),
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
@@ -51,6 +52,14 @@ export default function SearchBar() {
     setInputValue(event.target.value);
   };
 
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      setSearchString(inputValue);
+    }, 300)
+
+    return () => clearTimeout(delayDebounceFn)
+  }, [inputValue, setSearchString]);
+
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
       setSearchString(inputValue);
@@ -63,7 +72,7 @@ export default function SearchBar() {
         <SearchIcon />
       </SearchIconWrapper>
       <StyledInputBase
-        placeholder="Search…"
+        placeholder="Buscar…"
         inputProps={{ "aria-label": "search" }}
         value={inputValue}
         onChange={handleSearchChange}

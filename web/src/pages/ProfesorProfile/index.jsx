@@ -65,10 +65,9 @@ const ProfesorProfile = () => {
                 <Typography variant="h4" component="h1">
                     Perfil del Profesor
                 </Typography>
-                <UserInformation/>
-                <br></br><br></br>
+                <UserInformation/>                
                 <Link to="/course-creation" style={{textDecoration: "none"}}>
-                    <Button variant="contained" color="primary" style={{marginBottom: "20px"}}>
+                    <Button sx={{ marginTop: "20px" }} variant="contained" color="primary" style={{marginBottom: "20px"}}>
                         Crear Nuevo Curso
                     </Button>
                 </Link>
