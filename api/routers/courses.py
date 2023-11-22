@@ -9,7 +9,8 @@ from models.course_materials import CourseMaterial, CourseMaterialCreate
 from models.course_subscriptions import CourseUserSubscription
 from models.courses import (
     Course, CourseCreate, CourseRead, CourseUserRate,
-    CourseUserFavorite, Category, CourseReadWithMaterials
+    CourseUserFavorite, Category, CourseReadWithMaterials,
+    CourseUpdate
 )
 from models.users import User
 from sqlalchemy import func
@@ -365,3 +366,48 @@ async def get_course_certificate(id: int,
     data = open(tmp_certificate_file, "rb").read()
 
     return Response(content=data, media_type="image/png")
+
+
+@router.put('/{id}', response_model=CourseRead)
+def patch_course(id: int,
+                 course:  CourseUpdate,
+                 user: UserDependency,
+                 session: Session = Depends(get_session)):
+
+    query = select(Course).where(Course.id == id, Course.teacher_id == user.id)
+    existing_course = session.exec(query).first()
+    if existing_course is None:
+        raise HTTPException(status_code=404, detail="Curso no encontrado")
+
+    # Actualizar los campos del curso con la nueva información
+    for key, value in course.dict(exclude_unset=False).items():
+        if key in existing_course.schema().get("properties", []):
+            setattr(existing_course, key, value)
+    session.add(existing_course)
+
+    # Eliminar los materiales que no se enviaron en el request
+    session.query(CourseMaterial).filter(
+        CourseMaterial.course_id == id,
+        CourseMaterial.id.notin_([material.id for material in course.course_materials if material.id])
+    ).delete(synchronize_session=False)
+    # Actualizar los materiales del curso
+    for material_data in course.course_materials:
+        # Verificar si el material ya existe en la base de datos
+        existing_material = session.query(CourseMaterial).filter(
+            CourseMaterial.course_id == id,
+            CourseMaterial.id == material_data.id
+        ).first()
+        if existing_material:
+            # Actualizar el material existente
+            for material_key, material_value in material_data.dict(exclude_unset=True).items():
+                setattr(existing_material, material_key, material_value)
+            session.add(existing_material)
+        else:
+            # Crear un nuevo material
+            new_material = CourseMaterial.from_orm(material_data)
+            new_material.order = material_data.order
+            new_material.course_id = id
+            session.add(new_material)
+    session.commit()
+    session.refresh(existing_course)
+    return CourseRead.from_orm(existing_course)

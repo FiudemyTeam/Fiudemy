@@ -10,6 +10,8 @@ import CourseCreation from "@pages/CourseCreation";
 import { SearchContextProvider } from "@context/SearchContext";
 import { CourseContextProvider } from "@context/CourseContext";
 import Donation from "@pages/Donation";
+import EditCourseView from "@pages/CourseEdition";
+
 
 const WithHeader = ({ component }) => (
   <>
@@ -56,6 +58,7 @@ const Router = () => {
           </CourseContextProvider>
         }
       ></Route>
+      <Route path="/edit-course/:courseId" element={<EditCourseView />} />       
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
