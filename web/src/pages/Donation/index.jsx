@@ -33,14 +33,14 @@ function Copyright() {
 
 const steps = ['Dedicatoria', 'Donacion', 'Detalles de Pago'];
 
-function getStepContent(step) {
+function getStepContent(step, handleReviewChange) {
   switch (step) {
     case 0:
       return <AddressForm />;
     case 2:
       return <PaymentForm />;
     case 1:
-      return <Review />;
+      return <Review onReviewChange={handleReviewChange} />;
     default:
       throw new Error('Unknown step');
   }
@@ -49,11 +49,15 @@ function getStepContent(step) {
 export default function Checkout() {
   const { teacherId } = useParams();
 
-  let donationData = {
+  const [donationData, setDonationData] = React.useState({
     teacher_id: teacherId,
     amount: 10,
     message: "Msg",
-  }
+  });
+
+  const handleReviewChange = (reviewData) => {
+    setDonationData((prevData) => ({ ...prevData, ...reviewData }));
+  };
 
   const [activeStep, setActiveStep] = React.useState(0);
 
@@ -119,7 +123,7 @@ export default function Checkout() {
               </React.Fragment>
           ) : (
             <React.Fragment>
-              {getStepContent(activeStep)}
+              {getStepContent(activeStep, handleReviewChange)}
               <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                 {activeStep !== 0 && (
                   <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
