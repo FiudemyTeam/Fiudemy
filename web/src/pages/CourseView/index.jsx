@@ -12,6 +12,8 @@ import {
   Container,
   Paper,
 } from "@mui/material";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Lock from '@mui/icons-material/Lock';
 import { subscribe, unsubscribe, viewCourse, unviewCourse } from "./api";
 import { CourseContext } from "@context/CourseContext";
 
@@ -95,7 +97,7 @@ export default function CourseView({ data, handler }) {
           sx={{
             bgcolor: "background.paper",
             pt: 8,
-            pb: 6,
+            pb: 0,
           }}
         >
           <Container maxWidth="md">
@@ -233,10 +235,15 @@ export default function CourseView({ data, handler }) {
                     ? "Desuscribirse del curso"
                     : "Inscribirse al curso"}
                 </Button>
-                <Button variant="contained">
-                  Inscribirse a la certificación
-                </Button>
-                <Link to={`/donation/${data?.teacher_id}`} style={{ textDecoration: "none" }}>
+                {isCompleted && (
+                  <Link
+                    to={`/certificate/${data.id}`}
+                    style={{ textDecoration: "none" }}
+                  >
+                    <Button variant="contained">Obtener certificado</Button>
+                  </Link>
+                )}
+                <Link to="/donation" style={{ textDecoration: "none" }}>
                   <Button variant="contained">Hacer una donacion</Button>
                 </Link>
               </Stack>
@@ -249,7 +256,10 @@ export default function CourseView({ data, handler }) {
           </Typography>
           {data?.course_materials.map((course) => (
             <Accordion key={course.id} expanded={expandedCourse === course.id}>
-              <AccordionSummary onClick={() => handleCourseExpansion(course)}>
+              <AccordionSummary
+                onClick={() => handleCourseExpansion(course)}
+                expandIcon={(data?.is_subscribed || data?.is_owner) ? <ExpandMoreIcon /> : <Lock />}
+              >
                 <Typography
                   gutterBottom
                   component="h3"
@@ -263,7 +273,9 @@ export default function CourseView({ data, handler }) {
                 </Typography>
                 {data?.is_subscribed && (
                   <Checkbox
+                    preventDefault
                     checked={course.viewed}
+                    onClick={(e) => e.stopPropagation()}
                     onChange={() =>
                       handleCourseSelection(
                         course.course_id,

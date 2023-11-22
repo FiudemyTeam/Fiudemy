@@ -27,3 +27,16 @@ export async function getReceivedDonations() {
         throw new Error('Error obtaining donations: ', error);
     }
 }
+
+export const deleteCourse = async (courseId) => {
+    try {
+      const response = await axios.delete(`${API_HOST}/courses/${courseId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      throw new Error(`Error deleting course: ${error.message}`);
+    }
+  };

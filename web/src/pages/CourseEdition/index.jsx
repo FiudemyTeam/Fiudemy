@@ -1,11 +1,12 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -15,110 +16,85 @@ import MenuItem from '@mui/material/MenuItem';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import Divider from '@mui/material/Divider';
+import { updateCourseInformation } from '@pages/CourseEdition/api';
+
+const defaultTheme = createTheme();
+
+const EditCourseView = () => {
+  const { courseId } = useParams();
+  console.log("CourseId", courseId);
+  const API_HOST = import.meta.env.VITE_API_HOST;
+  const [courseDetails, setCourseDetails] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(false);
+
+  useEffect(() => {
+    const fetchCourseDetails = async () => {
+      try {
+        const response = await axios.get(`${API_HOST}/courses/${courseId}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
+        setCourseDetails(response.data);
+
+        console.log("COURSE DETAILS", courseDetails);
+      } catch (error) {
+        console.error('Error fetching course details:', error);
+      }
+    };
+
+    fetchCourseDetails();
+  }, [API_HOST, courseId]);
 
 
+  const addModule = () => {
+    const materialIndex = courseDetails.course_materials.length + 1;
+    setCourseDetails({
+      ...courseDetails,
+      course_materials: [
+        ...courseDetails.course_materials,
+        { title: `Módulo ${materialIndex}`, description: `Descripción del módulo ${materialIndex}`, type: '', value: '', order: materialIndex }
+      ],
+    });
+  };
 
+  const deleteModule = (materialIdx) => {
+    const course_materials = courseDetails.course_materials.filter((_, idx) => idx !== materialIdx);
+    setCourseDetails({ ...courseDetails, course_materials });
+  };
 
-const defaultTheme = createTheme(); // Crea un tema
-
-export default function CreateCourseView() {
-  const [courseData, setCourseData] = useState({
-    title: '',
-    description: '',
-    image: '',
-    course_materials: [{ title: '', description: '', type: '', value: '' }],
-  });
+  const handleCloseSnackbar = () => {
+    setSuccessMessage(false);
+  };
 
   const handleChange = (event, materialIdx = null) => {
     const { name, value } = event.target;
     if (materialIdx === null) {
-      setCourseData({ ...courseData, [name]: value });
+      setCourseDetails({ ...courseDetails, [name]: value });
     } else {
-      const course_materials = courseData.course_materials.map((material, idx) => {
+      const course_materials = courseDetails.course_materials.map((material, idx) => {
         if (idx === materialIdx) {
           return { ...material, [name]: value };
         } else {
           return material;
         }
       });
-      setCourseData({ ...courseData, course_materials });
+      setCourseDetails({ ...courseDetails, course_materials });
     }
   };
 
-  const addModule = () => {
-    setCourseData({
-      ...courseData,
-      course_materials: [...courseData.course_materials, { title: '', description: '', type: '', value: '' }],
-    });
-  };
-
-  const deleteModule = (index) => {
-    const course_materials = [...courseData.course_materials];
-    course_materials.splice(index, 1);
-    setCourseData({ ...courseData, course_materials });
-  };
-
-  const [createdCourseId, setCreatedCourseId] = useState(null);
-  const API_HOST = import.meta.env.VITE_API_HOST;
-  const [successMessage, setSuccessMessage] = useState(false); // Nuevo estado para el mensaje de éxito
 
   const handleSubmit = async () => {
-    console.log(courseData);
-
-    try {
-      const courseResponse = await axios.post(
-        `${API_HOST}/courses/`,
-        {
-          name: courseData.name,
-          description: courseData.description,
-          image: courseData.image,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-
-      console.log('Course created successfully:', courseResponse.data);
-
-      const { id: generatedCourseId } = courseResponse.data;
-
-      const modulePromises = courseData.course_materials.map((material, index) => {
-        return axios.post(
-          `${API_HOST}/courses/${generatedCourseId}/material`,
-          {
-            title: material.title,
-            description: material.description,
-            order: index + 1,
-            type: material.type,
-            value: material.value
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+    console.log('Course data to update:', courseDetails);
+    const { success } = await updateCourseInformation(courseId, courseDetails)
+      .catch((error) => {
+        console.error("Error al actualizar la información del curso!", error);
       });
-
-      const materialResponses = await Promise.all(modulePromises);
-
-      materialResponses.forEach((response, index) => {
-        console.log(`Material added to course for module ${index + 1}:`, response.data);
-      });
-      setSuccessMessage(true); // Activa el mensaje de éxito
-      setCreatedCourseId(generatedCourseId);
-    } catch (error) {
-      console.error('Error creating course or adding material:', error);
-    }
+    setSuccessMessage(success);
   };
 
-  const handleCloseSnackbar = () => {
-    setSuccessMessage(false); // Cierra el Snackbar al hacer clic en "Cerrar"
-  };
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -126,14 +102,14 @@ export default function CreateCourseView() {
       <Container sx={{ marginTop: "3em", marginBottom: "3em" }}>
         <Paper elevation={3} style={{ padding: "20px" }}>
           <Typography variant="h4" style={{ marginBottom: "10px" }}>
-            Crear curso
+            Editar mi curso
           </Typography>
           <TextField
             name="name"
             label="Título del curso"
             variant="outlined"
             fullWidth
-            value={courseData?.name || ''}
+            value={courseDetails?.name || ''}
             onChange={(e) => handleChange(e)}
             style={{ marginBottom: "10px" }}
           />
@@ -143,7 +119,7 @@ export default function CreateCourseView() {
             label="Imagen de portada del curso"
             variant="outlined"
             fullWidth
-            value={courseData?.image || ''}
+            value={courseDetails?.image || ''}
             onChange={(e) => handleChange(e)}
             style={{ marginBottom: "10px" }}
           />
@@ -152,11 +128,11 @@ export default function CreateCourseView() {
             label="Descripción del curso"
             variant="outlined"
             fullWidth
-            value={courseData?.description || ''}
+            value={courseDetails?.description || ''}
             onChange={(e) => handleChange(e)}
             style={{ marginBottom: "20px" }}
           />
-          {courseData?.course_materials.map((material, index) => (
+          {courseDetails?.course_materials.map((material, index) => (
             <>
               <Divider style={{ marginBottom: "2em" }} />
               <div key={index} style={{ marginBottom: "2em" }}>
@@ -214,29 +190,24 @@ export default function CreateCourseView() {
             <Button variant="outlined" onClick={addModule}>
               Agregar Módulo
             </Button>
-            {createdCourseId ? (
-              <Link to={`/course/${createdCourseId}`} style={{ textDecoration: 'none' }}>
-                <Button variant="contained" color="primary">
-                  Ir al Curso Creado
-                </Button>
-              </Link>
-            ) : (
+            <Link to={`/course/${courseId}`} style={{ textDecoration: 'none' }}>
               <Button variant="contained" color="primary" onClick={handleSubmit}>
-                Crear Curso
+                Guardar
               </Button>
-            )}
+            </Link>
+
           </Box>
-        </Paper>
+        </Paper >
       </Container>
       <Snackbar
         open={successMessage}
         autoHideDuration={6000}
         onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'center', horizontal: 'center' }} // Centra el Snackbar
-        style={{ width: '50%', minWidth: '300px' }} // Establece el ancho y el ancho mínimo del Snackbar
+        anchorOrigin={{ vertical: 'center', horizontal: 'center' }}
+        style={{ width: '50%', minWidth: '300px' }}
       >
         <MuiAlert elevation={6} variant="filled" onClose={handleCloseSnackbar} severity="success">
-          Curso creado con éxito
+          Curso editado con éxito
         </MuiAlert>
       </Snackbar>
 
@@ -253,6 +224,8 @@ export default function CreateCourseView() {
           Continua aprendiendo con nosotros!
         </Typography>
       </Box>
-    </ThemeProvider>
+    </ThemeProvider >
   );
-}
+};
+
+export default EditCourseView;

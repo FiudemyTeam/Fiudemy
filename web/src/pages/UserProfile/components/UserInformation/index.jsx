@@ -56,7 +56,7 @@ const UserInformation = () => {
   };
 
   return (
-    <div style={{ marginTop: "80px" }}>
+    <div style={{ marginTop: "10px" }}>
       <StyledCard>
         <CardContent>
           <TextField

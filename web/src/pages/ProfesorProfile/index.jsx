@@ -6,16 +6,16 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Copyright from "@components/Copyright";
 import UserInformation from "../UserProfile/components/UserInformation";
-import Courses from "../UserProfile/components/Courses";
+import Courses from "../ProfesorProfile/components/Courses";
 import {getCreatedCourses, getReceivedDonations} from "../ProfesorProfile/api";
 import CourseCreation from "../CourseCreation";
 import {fetchUserInformation} from "../UserProfile/components/UserInformation/api/index.jsx";
 import Donations from "../UserProfile/components/Donations/index.jsx";
 
-// Define el componente UserProfile
+// Define el componente ProfesorProfile
 const ProfesorProfile = () => {
-  // Estado para almacenar cursos iniciados y favoritos
-    const [createdCourses, setCreatedCourses] = useState([]);
+
+  const [createdCourses, setCreatedCourses] = useState([]);
     const [currentUser, setCurrentUser] = useState([]);
     const [receivedDonations, setReceivedDonations] = useState([]);
 
@@ -48,9 +48,14 @@ const ProfesorProfile = () => {
           })
           .catch((error) => {
               console.error("Error al obtener las donaciones recibidas:", error);
-          });
+          });          
   }, []); // El segundo argumento [] indica que este efecto se ejecuta solo una vez al montar el componente
 
+  const handleDeleteCourseInProfile = (courseId) => {
+    setCreatedCourses((prevCourses) =>
+      prevCourses.filter((course) => course.id !== courseId)
+    );
+  };
   // Renderiza el componente
   return (
     <div>
@@ -60,17 +65,19 @@ const ProfesorProfile = () => {
                 <Typography variant="h4" component="h1">
                     Perfil del Profesor
                 </Typography>
-                <UserInformation/>
-                <br></br><br></br>
+                <UserInformation/>                
                 <Link to="/course-creation" style={{textDecoration: "none"}}>
-                    <Button variant="contained" color="primary" style={{marginBottom: "20px"}}>
+                    <Button sx={{ marginTop: "20px" }} variant="contained" color="primary" style={{marginBottom: "20px"}}>
                         Crear Nuevo Curso
                     </Button>
                 </Link>
             </Container>
-            
-            <Container maxWidth="md" sx={{marginTop: "20px"}}>
-                <Courses courses={createdCourses} title="Cursos Creados"/>
+            <Container maxWidth="md" sx={{ marginTop: "20px" }}>
+              <Courses
+                courses={createdCourses}
+                title="Cursos Creados"
+                handleDeleteCourseInProfile={handleDeleteCourseInProfile}
+              />
             </Container>
 
             <Container maxWidth="md" sx={{marginTop: "20px"}}>
@@ -89,6 +96,6 @@ const ProfesorProfile = () => {
     </div>
   );
 };
-// Exporta el componente UserProfile
+// Exporta el componente ProfesorProfile
 export default ProfesorProfile;
 

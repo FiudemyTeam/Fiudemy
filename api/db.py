@@ -647,9 +647,9 @@ def seed_db():
     ]
 
     donations = [
-        Donation(id=1, donor_id=2, teacher_id=1, amount=1000, message="Thanks for the course!"),
-        Donation(id=2, donor_id=1, teacher_id=2, amount=10000, message="Amazing content!"),
-        Donation(id=3, donor_id=3, teacher_id=1, amount=50000, message="You changed my life!"),
+        Donation(id=1, donor_id=2, teacher_id=1, amount=1000, message="Gracias por el curso!"),
+        Donation(id=2, donor_id=1, teacher_id=2, amount=10000, message="Increible contenido!"),
+        Donation(id=3, donor_id=3, teacher_id=1, amount=50000, message="Cambiaste mi vida!"),
     ]
 
     with Session(engine) as session:
