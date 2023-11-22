@@ -1,23 +1,20 @@
-import React, { useState } from 'react';
-import AppBar from '@mui/material/AppBar';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
-import DeleteIcon from '@mui/icons-material/Delete'; // Importa el ícono de eliminación
-import { createTheme, ThemeProvider } from '@mui/material/styles'; // Importa createTheme
+import DeleteIcon from '@mui/icons-material/Delete';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import Toolbar from '@mui/material/Toolbar';
 import Container from '@mui/material/Container';
-import axios from 'axios'; 
-import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { Link } from 'react-router-dom';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import Divider from '@mui/material/Divider';
 
 
 
@@ -29,45 +26,50 @@ export default function CreateCourseView() {
     title: '',
     description: '',
     image: '',
-    modules: [{ moduleTitle: '', moduleDescription: '', moduleContentType: '', moduleContent: '' }],
+    course_materials: [{ title: '', description: '', type: '', value: '' }],
   });
 
-  const handleChange = (event, index) => {
+  const handleChange = (event, materialIdx = null) => {
     const { name, value } = event.target;
-    if (name === 'title' || name === 'description' || name ==='image') {
+    if (materialIdx === null) {
       setCourseData({ ...courseData, [name]: value });
     } else {
-      const modules = [...courseData.modules];
-      modules[index][name] = value;
-      setCourseData({ ...courseData, modules });
+      const course_materials = courseData.course_materials.map((material, idx) => {
+        if (idx === materialIdx) {
+          return { ...material, [name]: value };
+        } else {
+          return material;
+        }
+      });
+      setCourseData({ ...courseData, course_materials });
     }
   };
 
   const addModule = () => {
     setCourseData({
       ...courseData,
-      modules: [...courseData.modules, {  moduleTitle: '', moduleDescription: '', moduleContentType: '', moduleContent: '' }],
+      course_materials: [...courseData.course_materials, { title: '', description: '', type: '', value: '' }],
     });
   };
 
   const deleteModule = (index) => {
-    const modules = [...courseData.modules];
-    modules.splice(index, 1);
-    setCourseData({ ...courseData, modules });
+    const course_materials = [...courseData.course_materials];
+    course_materials.splice(index, 1);
+    setCourseData({ ...courseData, course_materials });
   };
 
-  const [createdCourseId, setCreatedCourseId] = useState(null); 
+  const [createdCourseId, setCreatedCourseId] = useState(null);
   const API_HOST = import.meta.env.VITE_API_HOST;
   const [successMessage, setSuccessMessage] = useState(false); // Nuevo estado para el mensaje de éxito
 
   const handleSubmit = async () => {
     console.log(courseData);
-    
+
     try {
       const courseResponse = await axios.post(
         `${API_HOST}/courses/`,
         {
-          name: courseData.title,
+          name: courseData.name,
           description: courseData.description,
           image: courseData.image,
         },
@@ -78,20 +80,20 @@ export default function CreateCourseView() {
           },
         }
       );
-    
+
       console.log('Course created successfully:', courseResponse.data);
-    
+
       const { id: generatedCourseId } = courseResponse.data;
-    
-      const modulePromises = courseData.modules.map((module, index) => {
+
+      const modulePromises = courseData.course_materials.map((material, index) => {
         return axios.post(
           `${API_HOST}/courses/${generatedCourseId}/material`,
           {
-            title: module.moduleTitle,
-            description: module.moduleDescription,
-            order: index+1,
-            type: module.moduleContentType,
-            value: module.moduleContent
+            title: material.title,
+            description: material.description,
+            order: index + 1,
+            type: material.type,
+            value: material.value
           },
           {
             headers: {
@@ -101,9 +103,9 @@ export default function CreateCourseView() {
           }
         );
       });
-    
+
       const materialResponses = await Promise.all(modulePromises);
-    
+
       materialResponses.forEach((response, index) => {
         console.log(`Material added to course for module ${index + 1}:`, response.data);
       });
@@ -113,7 +115,7 @@ export default function CreateCourseView() {
       console.error('Error creating course or adding material:', error);
     }
   };
-  
+
   const handleCloseSnackbar = () => {
     setSuccessMessage(false); // Cierra el Snackbar al hacer clic en "Cerrar"
   };
@@ -121,88 +123,92 @@ export default function CreateCourseView() {
   return (
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
-      <Container sx={{ marginTop: "20px" }}>
+      <Container sx={{ marginTop: "3em", marginBottom: "3em" }}>
         <Paper elevation={3} style={{ padding: "20px" }}>
           <Typography variant="h4" style={{ marginBottom: "10px" }}>
-            Crear un nuevo curso
+            Crear curso
           </Typography>
           <TextField
-            name="title"
+            name="name"
             label="Título del curso"
             variant="outlined"
             fullWidth
-            value={courseData.title}
+            value={courseData?.name || ''}
             onChange={(e) => handleChange(e)}
             style={{ marginBottom: "10px" }}
           />
+
           <TextField
             name="image"
             label="Imagen de portada del curso"
             variant="outlined"
             fullWidth
-            value={courseData.image}
+            value={courseData?.image || ''}
             onChange={(e) => handleChange(e)}
             style={{ marginBottom: "10px" }}
-          />          
+          />
           <TextField
             name="description"
             label="Descripción del curso"
             variant="outlined"
             fullWidth
-            value={courseData.description}
+            value={courseData?.description || ''}
             onChange={(e) => handleChange(e)}
             style={{ marginBottom: "20px" }}
           />
-          {courseData.modules.map((module, index) => (
-            <div key={index}>
-              <TextField
-                name="moduleTitle"
-                label={`Título del Módulo ${index + 1}`}
-                variant="outlined"
-                fullWidth
-                value={module.moduleTitle}
-                onChange={(e) => handleChange(e, index)}
-                style={{ marginBottom: "10px" }}
-              />
-              <TextField
-                name="moduleDescription"
-                label={`Descripción del Módulo ${index + 1}`}
-                variant="outlined"
-                fullWidth
-                value={module.moduleTitle}
-                onChange={(e) => handleChange(e, index)}
-                style={{ marginBottom: "10px" }}
-              />
-              <Select
-                name="moduleContentType"
-                label={`Tipo de contenido del Módulo ${index + 1}`}
-                variant="outlined"
-                fullWidth
-                value={module.moduleContentType}
-                onChange={(e) => handleChange(e, index)}
-                style={{ marginBottom: "20px" }}
-                displayEmpty
-              >
-                <MenuItem value="" disabled>
-                  Tipo de Contenido 
-                </MenuItem>
-                <MenuItem value="video">Video</MenuItem>
-                <MenuItem value="imagen">Imagen</MenuItem>
-                <MenuItem value="bibliografia">Bibliografía</MenuItem>
-              </Select>          
-              <TextField
-                name="moduleContent"
-                label={`Contenido del Módulo ${index + 1}`}
-                variant="outlined"
-                fullWidth
-                value={module.moduleContent}
-                onChange={(e) => handleChange(e, index)}
-                style={{ marginBottom: "20px" }}
-              />
-              <IconButton onClick={() => deleteModule(index)} color="error">
-                <DeleteIcon />
-              </IconButton>
-            </div>
+          {courseData?.course_materials.map((material, index) => (
+            <>
+              <Divider style={{ marginBottom: "2em" }} />
+              <div key={index} style={{ marginBottom: "2em" }}>
+                <TextField
+                  name="title"
+                  label={`Título del Módulo ${index + 1}`}
+                  variant="outlined"
+                  fullWidth
+                  value={material.title}
+                  onChange={(e) => handleChange(e, index)}
+                  style={{ marginBottom: "10px" }}
+                />
+                <TextField
+                  name="description"
+                  label={`Descripción del Módulo ${index + 1}`}
+                  variant="outlined"
+                  fullWidth
+                  value={material.description}
+                  onChange={(e) => handleChange(e, index)}
+                  style={{ marginBottom: "10px" }}
+                />
+                <Select
+                  name="type"
+                  label={`Tipo de contenido del Módulo ${index + 1}`}
+                  variant="outlined"
+                  fullWidth
+                  value={material.type}
+                  onChange={(e) => handleChange(e, index)}
+                  style={{ marginBottom: "20px" }}
+                  displayEmpty
+                >
+                  <MenuItem value="" disabled>
+                    Tipo de Contenido
+                  </MenuItem>
+                  <MenuItem value="video">Video</MenuItem>
+                  <MenuItem value="imagen">Imagen</MenuItem>
+                  <MenuItem value="bibliografia">Bibliografía</MenuItem>
+                </Select>
+                <TextField
+                  name="value"
+                  label={`Contenido del Módulo ${index + 1}`}
+                  variant="outlined"
+                  fullWidth
+                  value={material.value}
+                  onChange={(e) => handleChange(e, index)}
+                  style={{ marginBottom: "20px" }}
+                />
+                <Button variant="contained" color="error" onClick={() => deleteModule(index)}>
+                  <DeleteIcon /> Eliminar Módulo
+                </Button>
+              </div>
+            </>
           ))}
           <Box display="flex" justifyContent="space-between">
             <Button variant="outlined" onClick={addModule}>
@@ -233,7 +239,7 @@ export default function CreateCourseView() {
           Curso creado con éxito
         </MuiAlert>
       </Snackbar>
- 
+
       <Box sx={{ bgcolor: 'background.paper', p: 6 }} component="footer">
         <Typography variant="h6" align="center" gutterBottom>
           Fiudemy
