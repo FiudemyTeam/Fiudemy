@@ -233,9 +233,14 @@ export default function CourseView({ data, handler }) {
                     ? "Desuscribirse del curso"
                     : "Inscribirse al curso"}
                 </Button>
-                <Button variant="contained">
-                  Inscribirse a la certificación
-                </Button>
+                {isCompleted && (
+                  <Link
+                    to={`/certificate/${data.id}`}
+                    style={{ textDecoration: "none" }}
+                  >
+                    <Button variant="contained">Obtener certificado</Button>
+                  </Link>
+                )}
                 <Link to="/donation" style={{ textDecoration: "none" }}>
                   <Button variant="contained">Hacer una donacion</Button>
                 </Link>
