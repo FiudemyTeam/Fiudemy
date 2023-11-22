@@ -51,8 +51,8 @@ export default function Checkout() {
 
   const [donationData, setDonationData] = React.useState({
     teacher_id: teacherId,
-    amount: 10,
-    message: "Msg",
+    amount: 0,
+    message: "",
   });
 
   const handleReviewChange = (reviewData) => {
@@ -63,7 +63,6 @@ export default function Checkout() {
 
   const handleNext = async () => {
     if (activeStep == 2) {
-      console.log("DONAR")
       try {
         await axios.post(
           `${API_HOST}/donations/`,
