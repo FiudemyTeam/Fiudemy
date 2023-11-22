@@ -12,6 +12,8 @@ import {
   Container,
   Paper,
 } from "@mui/material";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Lock from '@mui/icons-material/Lock';
 import { subscribe, unsubscribe, viewCourse, unviewCourse } from "./api";
 import { CourseContext } from "@context/CourseContext";
 
@@ -249,7 +251,10 @@ export default function CourseView({ data, handler }) {
           </Typography>
           {data?.course_materials.map((course) => (
             <Accordion key={course.id} expanded={expandedCourse === course.id}>
-              <AccordionSummary onClick={() => handleCourseExpansion(course)}>
+              <AccordionSummary
+                onClick={() => handleCourseExpansion(course)}
+                expandIcon={(data?.is_subscribed || data?.is_owner) ? <ExpandMoreIcon /> : <Lock />}
+              >
                 <Typography
                   gutterBottom
                   component="h3"
@@ -263,7 +268,9 @@ export default function CourseView({ data, handler }) {
                 </Typography>
                 {data?.is_subscribed && (
                   <Checkbox
+                    preventDefault
                     checked={course.viewed}
+                    onClick={(e) => e.stopPropagation()}
                     onChange={() =>
                       handleCourseSelection(
                         course.course_id,
