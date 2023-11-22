@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "f4fb949844733e2f929dc57e7c704f6a00e9d7d25814258b08067632c5871e5e"
+            "sha256": "318747193a62519a867169827f440534b7cd503a8a06105d04e0a1ba7cd36f60"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -164,7 +164,7 @@
                 "sha256:f89e21afe925fcfa655965ca8ea10f24773a1791400989ff32f467badfe4a064",
                 "sha256:fa24255ae3c0ab67e613556375a4341af04a084bd58764731972bcbc8baeba36"
             ],
-            "markers": "python_version >= '3' and (platform_machine == 'aarch64' or (platform_machine == 'ppc64le' or (platform_machine == 'x86_64' or (platform_machine == 'amd64' or (platform_machine == 'AMD64' or (platform_machine == 'win32' or platform_machine == 'WIN32'))))))",
+            "markers": "python_version >= '3' and platform_machine == 'aarch64' or (platform_machine == 'ppc64le' or (platform_machine == 'x86_64' or (platform_machine == 'amd64' or (platform_machine == 'AMD64' or (platform_machine == 'win32' or platform_machine == 'WIN32')))))",
             "version": "==3.0.1"
         },
         "h11": {
@@ -359,6 +359,15 @@
             "index": "pypi",
             "markers": "python_version >= '3.7'",
             "version": "==2.8.0"
+        },
+        "segno": {
+            "hashes": [
+                "sha256:08f678ee3d0c96854f916879d2b953829332c6efcaa387d4b41b7b7a78d75e49",
+                "sha256:9bf88c8be5ca99657881889399f73ad595231230236d89a16b4eb4933513fe07"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'",
+            "version": "==1.5.3"
         },
         "sniffio": {
             "hashes": [
